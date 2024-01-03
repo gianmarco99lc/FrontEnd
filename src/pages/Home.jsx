@@ -1,84 +1,173 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
 
 const Home = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [nuevoUsuario, setNuevoUsuario] = useState({
-    nombre: "",
-    apellido: "",
+  const [Admins, setAdmins] = useState([]);
+  const [nuevoAdmin, setNuevoAdmin] = useState({
+    Username: "",
     correo: "",
     password: "",
-    tipoUsuario: "",
   });
-  const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [AdminEditando, setAdminEditando] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [errorMensaje, setErrorMensaje] = useState({
+    username: "",
+    correo: "",
+    password: "",
+  });
 
-  const handleAgregarUsuario = () => {
+  //GET
+  
+  // Este efecto se ejecutará una vez, cuando el componente se monte
+  useEffect(() => {
+    // Llamada a la API para obtener todos los admins
+    fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/todos")
+      .then((response) => response.json())
+      .then((data) => setAdmins(data))
+      .catch((error) => console.error("Error al obtener datos de la API:", error));
+  }, []); // La dependencia vacía asegura que el efecto se ejecute solo una vez al montar el componente
+
+
+  const handleAgregarAdmin = () => {
     setModalVisible(true);
   };
 
-  const handleGuardarUsuario = () => {
-    setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
-    setNuevoUsuario({
-      nombre: "",
-      apellido: "",
+  const validateInputs = () => {
+    let isValid = true;
+    const errors = {
+      username: "",
       correo: "",
       password: "",
-      tipoUsuario: "",
-    });
+    };
+
+    // Validaciones para el Username
+    if (nuevoAdmin.Username.length < 4 || nuevoAdmin.Username.length > 20) {
+      errors.username =
+        "El Username debe tener entre 4 y 20 caracteres.";
+      isValid = false;
+    }
+
+    // Validaciones para el Correo
+    if (nuevoAdmin.correo.length < 4 || nuevoAdmin.correo.length > 40) {
+      errors.correo = "El Correo debe tener entre 4 y 40 caracteres.";
+      isValid = false;
+    }
+
+    // Validaciones para el Password
+    if (nuevoAdmin.password.length < 4 || nuevoAdmin.password.length > 15) {
+      errors.password = "El Password debe tener entre 4 y 15 caracteres.";
+      isValid = false;
+    }
+
+    setErrorMensaje(errors);
+    return isValid;
+  };
+
+  const handleGuardarAdmin = async () => {
+    if (!validateInputs()) {
+      // No guardar si hay errores de validación
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _username: nuevoAdmin.Username,
+          _correo: nuevoAdmin.correo,
+          _password: nuevoAdmin.password,
+        }),
+      });
+
+      if (!response.ok) {
+        // Si la llamada a la API no fue exitosa, muestra un mensaje de alerta con el código de respuesta
+        const errorMensaje = `Error al realizar la solicitud: ${response.status} - ${response.statusText}`;
+        alert(errorMensaje);
+        return;
+      }
+
+      // La llamada a la API fue exitosa, agrega el nuevo administrador al estado local
+      const newAdmin = await response.json();
+      setAdmins([...Admins, { ...newAdmin, id: Admins.length + 1 }]);
+      setNuevoAdmin({
+        Username: "",
+        correo: "",
+        password: "",
+      });
+      setAdminEditando(null);
+      setModalVisible(false);
+      setErrorMensaje(""); // Limpia cualquier mensaje de error anterior
+
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+      alert("Error al realizar la solicitud. Consulta la consola para más detalles.");
+    }
+  
+
+    // setAdmins([...Admins, { ...nuevoAdmin, id: Admins.length + 1 }]);
+    // setNuevoAdmin({
+    //   Username: "",
+    //   correo: "",
+    //   password: "",
+    // });
     setModalVisible(false);
   };
 
-  const handleActualizarUsuario = () => {
-    setUsuarios((prevUsuarios) =>
-      prevUsuarios.map((usuario) =>
-        usuario.id === usuarioEditando.id
-          ? { ...usuario, ...nuevoUsuario }
-          : usuario
+  const handleActualizarAdmin = () => {
+    if (!validateInputs()) {
+      // No actualizar si hay errores de validación
+      return;
+    }
+
+    setAdmins((prevAdmins) =>
+      prevAdmins.map((Admin) =>
+        Admin.id === AdminEditando.id
+          ? { ...Admin, ...nuevoAdmin }
+          : Admin
       )
     );
-    setNuevoUsuario({
-      nombre: "",
-      apellido: "",
+    setNuevoAdmin({
+      Username: "",
       correo: "",
       password: "",
-      tipoUsuario: "",
     });
-    setUsuarioEditando(null);
+    setAdminEditando(null);
     setModalVisible(false);
   };
 
-  const handleEditarUsuario = (usuario) => {
-    setUsuarioEditando(usuario);
-    setNuevoUsuario({
-      nombre: usuario.nombre,
-      apellido: usuario.apellido || "",
-      correo: usuario.correo,
-      password: usuario.password || "",
-      tipoUsuario: usuario.tipoUsuario || "",
+  const handleEditarAdmin = (Admin) => {
+    setAdminEditando(Admin);
+    setNuevoAdmin({
+      Username: Admin.Username,
+      correo: Admin.correo,
+      password: Admin.password || "",
     });
     setModalVisible(true);
   };
 
-  const handleEliminarUsuario = (id) => {
-    setUsuarios((prevUsuarios) =>
-      prevUsuarios.filter((usuario) => usuario.id !== id)
+  const handleEliminarAdmin = (id) => {
+    setAdmins((prevAdmins) =>
+      prevAdmins.filter((Admin) => Admin.id !== id)
     );
   };
 
   const handleCancelar = () => {
-    setModalVisible(false); // Oculta el modal al hacer clic en Cancelar
-    setNuevoUsuario({ nombre: "", correo: "" }); // Restablece los valores del nuevo usuario
-    setUsuarioEditando(false); // Resetea la bandera de usuario editando
+    setModalVisible(false);
+    setNuevoAdmin({ Username: "", correo: "", password: "" });
+    setAdminEditando(false);
+    setErrorMessages({
+      username: "",
+      correo: "",
+      password: "",
+    });
   };
 
-  // Crear un array de 10 elementos para representar las filas
-  const emptyData = Array.from({ length: 10 }, (_, index) => index + 1);
+  const emptyData = Array.from({ length: 5 }, (_, index) => index + 1);
 
   return (
     <div className="contenedor-usuarios">
@@ -86,48 +175,44 @@ const Home = () => {
         <h1></h1>
       </div>
       <div>
-        <Button variant="contained" onClick={handleAgregarUsuario}>
+        <Button variant="contained" onClick={handleAgregarAdmin}>
           Agregar
         </Button>
       </div>
       <div>
-        <table className="tabla-usuarios">
+        <table className="tabla-admins">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
+              <th>Username</th>
               <th>Correo</th>
               <th>Password</th>
-              <th>Tipo de Usuario</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((usuario) => {
-                emptyData.pop()
-                return (
-                  <tr key={usuario.id}>
-                    <td>{usuario.nombre}</td>
-                    <td>{usuario.apellido}</td>
-                    <td>{usuario.correo}</td>
-                    <td>{usuario.password}</td>
-                    <td>{usuario.tipoUsuario}</td>
-                    <td>
-                      <button
-                        className="edit-button"
-                        onClick={() => handleEditarUsuario(usuario)}
-                      >
-                        Editar
-                      </button>
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleEliminarUsuario(usuario.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </td>
-                  </tr>
-                )
+            {Admins.map((Admin) => {
+              emptyData.pop();
+              return (
+                <tr key={Admin.id}>
+                  <td>{Admin.Username}</td>
+                  <td>{Admin.correo}</td>
+                  <td>{Admin.password}</td>
+                  <td>
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEditarAdmin(Admin)}
+                    >
+                      Editar
+                    </button>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleEliminarAdmin(Admin.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </td>
+                </tr>
+              );
             })}
             {emptyData.map((id) => (
               <tr key={id}>
@@ -135,8 +220,6 @@ const Home = () => {
                 <td>{/* Agrega el contenido necesario */}</td>
                 <td>{/* Agrega el contenido necesario */}</td>
                 <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* No hay acciones en las filas vacías */}</td>
               </tr>
             ))}
           </tbody>
@@ -146,73 +229,46 @@ const Home = () => {
       {modalVisible && (
         <div className="modal">
           <div className="modal-content">
-            <h2>{usuarioEditando ? "Editar usuario" : "Nuevo usuario"}</h2>
-            <label>Nombre:</label>
+            <h2>{AdminEditando ? "Editar Admin" : "Nuevo Admin"}</h2>
+            <label>Username:</label>
             <input
               type="text"
-              value={nuevoUsuario.nombre}
+              value={nuevoAdmin.Username}
               onChange={(e) =>
-                setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })
+                setNuevoAdmin({ ...nuevoAdmin, Username: e.target.value })
               }
             />
-            <label>Apellido:</label>
-            <input
-              type="text"
-              value={nuevoUsuario.apellido}
-              onChange={(e) =>
-                setNuevoUsuario({ ...nuevoUsuario, apellido: e.target.value })
-              }
-            />
+            <div className="error-message">{errorMensaje.username}</div>
             <label>Correo:</label>
             <input
               type="text"
-              value={nuevoUsuario.correo}
+              value={nuevoAdmin.correo}
               onChange={(e) =>
-                setNuevoUsuario({ ...nuevoUsuario, correo: e.target.value })
+                setNuevoAdmin({ ...nuevoAdmin, correo: e.target.value })
               }
             />
+            <div className="error-message">{errorMensaje.correo}</div>
             <label>Password:</label>
             <input
               type="password"
-              value={nuevoUsuario.password}
+              value={nuevoAdmin.password}
               onChange={(e) =>
-                setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })
+                setNuevoAdmin({ ...nuevoAdmin, password: e.target.value })
               }
             />
-            <RadioGroup
-              aria-label="tipoUsuario"
-              name="tipoUsuario"
-              value={nuevoUsuario.tipoUsuario}
-              onChange={(e) =>
-                setNuevoUsuario({
-                  ...nuevoUsuario,
-                  tipoUsuario: e.target.value,
-                })
-              }
-            >
-              <FormControlLabel
-                value="victima"
-                control={<Radio />}
-                label="Víctima"
-              />
-              <FormControlLabel
-                value="agresor"
-                control={<Radio />}
-                label="Agresor"
-              />
-            </RadioGroup>
+            <div className="error-message">{errorMensaje.password}</div>
             <div className="modal-buttons">
               <button
                 className={
-                  usuarioEditando ? "actualizar-button" : "guardar-button"
+                  AdminEditando ? "actualizar-button" : "guardar-button"
                 }
                 onClick={
-                  usuarioEditando
-                    ? handleActualizarUsuario
-                    : handleGuardarUsuario
+                  AdminEditando
+                    ? handleActualizarAdmin
+                    : handleGuardarAdmin
                 }
               >
-                {usuarioEditando ? "Actualizar" : "Guardar"}
+                {AdminEditando ? "Actualizar" : "Guardar"}
               </button>
               <button className="cancelar-button" onClick={handleCancelar}>
                 Cancelar

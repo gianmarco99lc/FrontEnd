@@ -17,17 +17,31 @@ const Home = () => {
     correo: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   //GET
   
-  // Este efecto se ejecutará una vez, cuando el componente se monte
-  useEffect(() => {
-    // Llamada a la API para obtener todos los admins
-    fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/todos")
-      .then((response) => response.json())
-      .then((data) => setAdmins(data))
-      .catch((error) => console.error("Error al obtener datos de la API:", error));
-  }, []); // La dependencia vacía asegura que el efecto se ejecute solo una vez al montar el componente
+useEffect(() => {
+  fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/todos")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Data from API:", data);
+
+      if (Array.isArray(data.response)) {
+        setAdmins(data.response);
+      } else {
+        console.error("La respuesta de la API no es un array:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error al obtener datos de la API:", error);
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
+}, []);
+
+  
 
 
   const handleAgregarAdmin = () => {
@@ -93,7 +107,8 @@ const Home = () => {
 
       // La llamada a la API fue exitosa, agrega el nuevo administrador al estado local
       const newAdmin = await response.json();
-      setAdmins([...Admins, { ...newAdmin, id: Admins.length + 1 }]);
+      console.log("estoy aqui",newAdmin.response);
+      setAdmins([...Admins, { ...newAdmin.response, id: Admins.length + 1 }]);
       setNuevoAdmin({
         Username: "",
         correo: "",
@@ -102,6 +117,7 @@ const Home = () => {
       setAdminEditando(null);
       setModalVisible(false);
       setErrorMensaje(""); // Limpia cualquier mensaje de error anterior
+
 
     } catch (error) {
       console.error("Error al realizar la solicitud:", error);
@@ -160,7 +176,7 @@ const Home = () => {
     setModalVisible(false);
     setNuevoAdmin({ Username: "", correo: "", password: "" });
     setAdminEditando(false);
-    setErrorMessages({
+    setErrorMensaje({
       username: "",
       correo: "",
       password: "",
@@ -194,9 +210,9 @@ const Home = () => {
               emptyData.pop();
               return (
                 <tr key={Admin.id}>
-                  <td>{Admin.Username}</td>
-                  <td>{Admin.correo}</td>
-                  <td>{Admin.password}</td>
+                  <td>{Admin._username}</td>
+                  <td>{Admin._correo}</td>
+                  <td>{Admin._password}</td>
                   <td>
                     <button
                       className="edit-button"

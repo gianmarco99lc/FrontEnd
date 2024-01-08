@@ -8,6 +8,7 @@ import ZonasSeguridad from "./pages/ZonasSeguridad";
 import PuntosControl from "./pages/PuntosControl";
 import Alertas from "./pages/Alertas";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
@@ -15,7 +16,8 @@ const App = () => {
       <div className="App">
         <Sidebar />
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path="/" element={<Login />} /> 
+          <Route path="/home" element={<Home/>} />
           <Route path="/alertas" element={<Alertas/>} />
           <Route path="/puntosdecontrol" element={<PuntosControl/>} />
           <Route path="/sentencias" element={<Sentencias/>} />

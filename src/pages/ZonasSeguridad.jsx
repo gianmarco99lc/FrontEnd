@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Mapa from "./Mapa";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ZonasSeguridad = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,12 +25,17 @@ const ZonasSeguridad = () => {
     setCoordenadasInput(coordenadas);
   };
 
+  const handleEliminarPunto = (index) => {
+    const nuevaLista = puntosControl.filter((_, i) => i !== index);
+    setPuntosControl(nuevaLista);
+  };
+
   return (
     <div className="contenedor-usuarios">
-      <div className="titulo">
+      {/* <div className="titulo">
         <h1></h1>
-      </div>
-      <div>
+      </div> */}
+      <div className="">
         <table className="tabla-usuarios">
           <thead>
             <tr>
@@ -57,38 +64,71 @@ const ZonasSeguridad = () => {
 
       {modalVisible && (
         <div className="modal">
-          <div className="modal-content">
-            <h2>Zona de seguridad</h2>
-            <p>Aquí se muestra el mapa</p>
-            <Mapa
-              isOpen={modalVisible}
-              handleCloseModal={handleCerrarModal}
-              handleAgregarPunto={handleAgregarPunto}
-            />
-
-            {/* Muestra las coordenadas en un input */}
+          <div className="modal-content contenedor">
             <div>
-              <label>Coordenadas:</label>
-              <input
-                type="text"
-                value={`Latitud: ${coordenadasInput.lat}, Longitud: ${coordenadasInput.lng}`}
-                readOnly
+              <Mapa
+                isOpen={modalVisible}
+                handleCloseModal={handleCerrarModal}
+                handleAgregarPunto={handleAgregarPunto}
               />
             </div>
+            <div>
+              <div>
+                <h2>Coordenadas:</h2>
+                <input
+                  type="text"
+                  value={`Latitud: ${coordenadasInput.lat}`}
+                  readOnly
+                />
+                <input
+                  type="text"
+                  value={`Longitud: ${coordenadasInput.lng}`}
+                  readOnly
+                />
+              </div>
 
-            {/* Muestra la lista de puntos de control */}
-            <h3>Puntos de control:</h3>
-            <ul>
-              {puntosControl.map((punto, index) => (
-                <li key={index}>Latitud: {punto.lat}, Longitud: {punto.lng}</li>
-              ))}
-            </ul>
+              <div>
+                <button
+                  className="agregar-punto-button"
+                  onClick={() => handleAgregarPunto(coordenadasInput)}
+                >
+                  Agregar Punto
+                </button>
+              </div>
 
-            <div className="modal-buttons">
-              <button className="cancelar-button" onClick={handleCerrarModal}>
-                Cerrar
-              </button>
+              <div className="tabla-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {puntosControl.map((punto, index) => (
+                    <tr key={index}>
+                      <td>{punto.lat}</td>
+                      <td>{punto.lng}</td>
+                      <td>
+                        {/* <button onClick={() => handleEliminarPunto(index)}>
+                          Eliminar
+                        </button> */}
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handleEliminarPunto(index)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              </div>
+              
             </div>
+            <div className="modal-buttons"></div>
           </div>
         </div>
       )}

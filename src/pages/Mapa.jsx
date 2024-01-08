@@ -3,8 +3,10 @@ import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto }) => {
   const containerStyle = {
-    width: "100%",
-    height: "70%",
+    width: "500px",
+    height: "500px",
+    display: "flex",
+    justifyContent: "center"
   };
 
   const center = {
@@ -29,8 +31,7 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto }) => {
 
   return (
     isOpen && (
-      <div className="modal">
-        <div className="modal-content">
+        <div className=".mapa">
           <h2>Zona de seguridad</h2>
           <LoadScript googleMapsApiKey="AIzaSyBcVP__otz3wxYvWgx_LUJp0DOJSDKhDV4">
             <GoogleMap
@@ -49,7 +50,6 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto }) => {
             </button>
           </div>
         </div>
-      </div>
     )
   );
 };

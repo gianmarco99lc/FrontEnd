@@ -41,19 +41,21 @@ const Login = () => {
       <h1>Login</h1>
       <form className="form-content" onSubmit={handleLogin}>
         <TextField
+          name="username"
           label="Username"
           type="text"
-          value={username}
+          value={form.username}
           variant="outlined"
           onChange={handleChange}
         />
         <TextField
-            label="Password"
-            type="password"
-            value={password}
-            variant="outlined"
-            onChange={handleChange}
-          />
+          name="password"
+          label="Password"
+          type="password"
+          value={form.password}
+          variant="outlined"
+          onChange={handleChange}
+        />
           {
             isLoading ? <CircularProgress /> :
             <Button type="submit" variant="contained">

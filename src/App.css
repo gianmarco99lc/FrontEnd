@@ -331,6 +331,7 @@ width: 20%; /* Ajusta según sea necesario */
 }
 
 .login {
+  padding: 10px 15px;
   width: 25%;
   height: 50%;
   border: 1px solid #ccc;

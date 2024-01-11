@@ -8,11 +8,12 @@ import "./App.css";
 
 const App = () => {
 
-  const { authInfo } = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
 
   let Routes = NotAuthenticatedRoutes;
 
-  switch(authInfo.isAuthenticated) {
+
+  switch(authState.isAuthenticated) {
     case true:
       Routes = AuthenticatedRoutes;
   }
@@ -20,7 +21,7 @@ const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
-      { authInfo.isAuthenticated && <Sidebar />}
+      { authState.isAuthenticated && <Sidebar />}
         <Routes />
       </BrowserRouter>
     </div>

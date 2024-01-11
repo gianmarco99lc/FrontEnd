@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const Login = () => {
 
-  const authState = useContext(AuthContext);
+  const { authState, setAuthentication } = useContext(AuthContext);
 
   const [form, setForm] = useState({username: "", password: ""})
 
@@ -25,7 +25,7 @@ const Login = () => {
       const user = response.data.response;
 
       if (form.username === user._username && form.password === user._password)
-        authState.dispatch({type: "authenticated", payload: user});
+        setAuthentication({type: "authenticated", payload: user});
       else
         alert("Credenciales incorrectas");
 

@@ -11,12 +11,12 @@ import ZonasSeguridad from "../pages/ZonasSeguridad";
 export const AuthenticatedRoutes = () => {
   return (
     <Routes>
-      <Route path="/home" element={<Home/>} />
-        <Route path="/alertas" element={<Alertas/>} />
-        <Route path="/puntosdecontrol" element={<PuntosControl/>} />
-        <Route path="/sentencias" element={<Sentencias/>} />
-        <Route path="/usuarios" element={<Usuarios/>} />
-        <Route path="/zonasdeseguridad" element={<ZonasSeguridad/>} />
+      <Route path="/" element={<Home/>} />
+      <Route path="/alertas" element={<Alertas/>} />
+      <Route path="/puntosdecontrol" element={<PuntosControl/>} />
+      <Route path="/sentencias" element={<Sentencias/>} />
+      <Route path="/usuarios" element={<Usuarios/>} />
+      <Route path="/zonasdeseguridad" element={<ZonasSeguridad/>} />
     </Routes>
   );
 }

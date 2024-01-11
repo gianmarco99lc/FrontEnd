@@ -1,6 +1,6 @@
 import React from "react";
 
-export const authReducer = (state, action) => {
+export const authReducer = (action) => {
   switch(action.type) {
     case "authenticate":
       return {isAuthenticated: true, userInfo: action.payload};

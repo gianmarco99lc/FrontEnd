@@ -22,7 +22,12 @@ const Login = () => {
 
       const response = await axios.get(`http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/username/${form.username}`);
 
-      console.log("Aquí está la respuesta:", response);
+      const user = response.data.response;
+
+      if (form.username === user._username && form.password === user._password)
+        dispatch({type: "authenticated", payload: user});
+      else
+        alert("Credenciales incorrectas");
 
     }catch(error){
       console.log(error);

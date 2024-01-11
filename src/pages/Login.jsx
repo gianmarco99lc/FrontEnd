@@ -25,14 +25,13 @@ const Login = () => {
       const user = response.data.response;
 
       if (form.username === user._username && form.password === user._password)
-        dispatch({type: "authenticated", payload: user});
+        authState.dispatch({type: "authenticated", payload: user});
       else
         alert("Credenciales incorrectas");
 
-      authState.dispatch({type: "authenticate", payload: user});
-
     }catch(error){
       console.log(error);
+      alert("Error interno.");
     } finally{
       setIsLoading(false);
     }

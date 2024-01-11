@@ -1,31 +1,24 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import "./App.css";
+import React, { useContext } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Usuarios from "./pages/Usuarios";
-import Sentencias from "./pages/Sentencias";
-import ZonasSeguridad from "./pages/ZonasSeguridad";
-import PuntosControl from "./pages/PuntosControl";
-import Alertas from "./pages/Alertas";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
+import { AuthContext } from './contexts/auth/auth.context';
+import { AuthenticatedRoutes } from './routes/authenticated';
+import { NotAuthenticatedRoutes } from './routes/not-authenticated';
+import "./App.css";
 
 const App = () => {
+
+  const state = useContext(AuthContext);
+
+  let Routes = state.isAuthenticated ? AuthenticatedRoutes : NotAuthenticatedRoutes
+
   return (
-    <Router>
-      <div className="App">
-        <Sidebar />
-        <Routes>
-          <Route path="/" element={<Login />} /> 
-          <Route path="/home" element={<Home/>} />
-          <Route path="/alertas" element={<Alertas/>} />
-          <Route path="/puntosdecontrol" element={<PuntosControl/>} />
-          <Route path="/sentencias" element={<Sentencias/>} />
-          <Route path="/usuarios" element={<Usuarios/>} />
-          <Route path="/zonasdeseguridad" element={<ZonasSeguridad/>} />
-        </Routes>   
-      </div>
-    </Router>
+    <div className="App">
+      { state.isAuthenticated && <Sidebar />}
+      <BrowserRouter>
+        <Routes />
+      </BrowserRouter>
+    </div>
   );
 }
 

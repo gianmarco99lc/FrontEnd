@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, CircularProgress } from "@mui/material";
-import axios from 'axios';
 import { AuthContext } from '../contexts/auth/auth.context';
+import axios from 'axios';
 
 const Login = () => {
 
-  const { dispatch } = useContext(AuthContext);
+  const authState = useContext(AuthContext);
 
   const [form, setForm] = useState({username: "", password: ""})
 
@@ -15,8 +15,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-
     e.preventDefault();
+
     try {
       setIsLoading(true);
 
@@ -28,6 +28,8 @@ const Login = () => {
         dispatch({type: "authenticated", payload: user});
       else
         alert("Credenciales incorrectas");
+
+      authState.dispatch({type: "authenticate", payload: user});
 
     }catch(error){
       console.log(error);

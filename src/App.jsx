@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import { AuthContext } from './contexts/auth/auth.context';
@@ -8,14 +8,19 @@ import "./App.css";
 
 const App = () => {
 
-  const state = useContext(AuthContext);
+  const { authInfo } = useContext(AuthContext);
 
-  let Routes = state.isAuthenticated ? AuthenticatedRoutes : NotAuthenticatedRoutes
+  let Routes = NotAuthenticatedRoutes;
+
+  switch(authInfo.isAuthenticated) {
+    case true:
+      Routes = AuthenticatedRoutes;
+  }
 
   return (
     <div className="App">
-      { state.isAuthenticated && <Sidebar />}
       <BrowserRouter>
+      { authInfo.isAuthenticated && <Sidebar />}
         <Routes />
       </BrowserRouter>
     </div>

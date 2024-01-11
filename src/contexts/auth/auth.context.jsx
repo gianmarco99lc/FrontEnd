@@ -1,11 +1,11 @@
 import React from "react";
 
-export const authReducer = (action) => {
+export const authReducer = (state, action) => {
   switch(action.type) {
     case "authenticate":
-      return {isAuthenticated: true, userInfo: action.payload};
+      return {...state, isAuthenticated: true, userInfo: action.payload};
     case "unauthenticate":
-      return {isAuthenticated: false, userInfo: null};
+      return {...state, isAuthenticated: false, userInfo: null};
   }
 }
 

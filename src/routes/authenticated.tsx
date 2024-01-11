@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from "../pages/Login";
 import Home from "../pages/Home";
 import Alertas from "../pages/Alertas";
@@ -11,7 +11,8 @@ import ZonasSeguridad from "../pages/ZonasSeguridad";
 export const AuthenticatedRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home/>} />
+      <Route path="/" element={<Navigate to="/home" />}/>
+      <Route path="/home" element={<Home/>} />
       <Route path="/alertas" element={<Alertas/>} />
       <Route path="/puntosdecontrol" element={<PuntosControl/>} />
       <Route path="/sentencias" element={<Sentencias/>} />

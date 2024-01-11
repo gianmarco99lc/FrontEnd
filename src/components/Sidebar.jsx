@@ -10,7 +10,7 @@ function Sidebar() {
     e.preventDefault();
     navigate(path);
   };
-  
+
   return (
     <div className="Sidebar">
       <ul className="SidebarList">

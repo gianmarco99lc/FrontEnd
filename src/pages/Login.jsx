@@ -31,6 +31,7 @@ const Login = () => {
 
     }catch(error){
       console.log(error);
+      alert("Error interno.");
     } finally{
       setIsLoading(false);
     }

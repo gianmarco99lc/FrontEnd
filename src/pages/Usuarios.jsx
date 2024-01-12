@@ -32,7 +32,7 @@ const Usuarios = () => {
       setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
 
       const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
-        Username: nuevoUsuario.username,
+        _Username: nuevoUsuario.username,
         _Correo: nuevoUsuario.correo,
         _Nombre: nuevoUsuario.nombre,
         usuarioTypeDto: {
@@ -42,6 +42,11 @@ const Usuarios = () => {
         _Password: nuevoUsuario.password,
         estatus: true,
         docIdentidad: "",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
       });
 
       console.log(respuestaNuevoUsuario);

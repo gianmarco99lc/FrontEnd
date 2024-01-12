@@ -10,7 +10,7 @@ const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
-    apellido: "",
+    username: "",
     correo: "",
     password: "",
     tipoUsuario: "",
@@ -57,7 +57,7 @@ const Usuarios = () => {
     setUsuarioEditando(usuario);
     setNuevoUsuario({
       nombre: usuario.nombre,
-      apellido: usuario.apellido || "",
+      username: usuario.username || "",
       correo: usuario.correo,
       password: usuario.password || "",
       tipoUsuario: usuario.tipoUsuario || "",
@@ -94,8 +94,8 @@ const Usuarios = () => {
         <table className="tabla-usuarios">
           <thead>
             <tr>
+              <th>Username</th>
               <th>Nombre</th>
-              <th>Apellido</th>
               <th>Correo</th>
               <th>Password</th>
               <th>Tipo de Usuario</th>
@@ -108,7 +108,7 @@ const Usuarios = () => {
                 return (
                   <tr key={usuario.id}>
                     <td>{usuario.nombre}</td>
-                    <td>{usuario.apellido}</td>
+                    <td>{usuario.username}</td>
                     <td>{usuario.correo}</td>
                     <td>{usuario.password}</td>
                     <td>{usuario.tipoUsuario}</td>
@@ -155,12 +155,12 @@ const Usuarios = () => {
                 setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })
               }
             />
-            <label>Apellido:</label>
+            <label>Username:</label>
             <input
               type="text"
-              value={nuevoUsuario.apellido}
+              value={nuevoUsuario.username}
               onChange={(e) =>
-                setNuevoUsuario({ ...nuevoUsuario, apellido: e.target.value })
+                setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })
               }
             />
             <label>Correo:</label>

@@ -25,7 +25,7 @@ const Login = () => {
       const user = response.data.response;
 
       if (form.username === user._username && form.password === user._password)
-        setAuthentication({type: "authenticated", payload: user});
+        setAuthentication({type: "authenticate", payload: user});
       else
         alert("Credenciales incorrectas");
 

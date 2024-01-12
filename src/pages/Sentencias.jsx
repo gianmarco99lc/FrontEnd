@@ -31,13 +31,13 @@ const Sentencias = () => {
       ...sentencias,
       { ...nuevaSentencia, id: sentencias.length + 1 },
     ]);
-    setNuevaSentencia({
-      victima: "",
-      agresor: "",
-      tiemposControl: "",
-      distanciasAlejamiento: "",
-      zonasSeguridad: [],
-    });
+    // setNuevaSentencia({
+    //   victima: "",
+    //   agresor: "",
+    //   tiemposControl: "",
+    //   distanciasAlejamiento: "",
+    //   zonasSeguridad: [],
+    // });
     setModalVisible(false);
   };
 
@@ -200,6 +200,7 @@ const Sentencias = () => {
             </h2>
             <label>Víctima:</label>
             <select
+              name="victima"
               value={nuevaSentencia.victima}
               onChange={(e) =>
                 setNuevaSentencia({
@@ -208,6 +209,7 @@ const Sentencias = () => {
                 })
               }
             >
+              {}
               <option value="opcion1">Opción 1</option>
               <option value="opcion2">Opción 2</option>
               {/* Agrega más opciones según sea necesario */}
@@ -215,6 +217,7 @@ const Sentencias = () => {
 
             <label>Agresor:</label>
             <select
+              name="agresor"
               value={nuevaSentencia.agresor}
               onChange={(e) =>
                 setNuevaSentencia({
@@ -223,6 +226,7 @@ const Sentencias = () => {
                 })
               }
             >
+              {}
               <option value="opcionA">Opción A</option>
               <option value="opcionB">Opción B</option>
               {/* Agrega más opciones según sea necesario */}

@@ -70,6 +70,7 @@ const ZonasSeguridad = () => {
                 isOpen={modalVisible}
                 handleCloseModal={handleCerrarModal}
                 handleAgregarPunto={handleAgregarPunto}
+                puntosControl={puntosControl}
               />
             </div>
             <div>
@@ -97,36 +98,35 @@ const ZonasSeguridad = () => {
               </div>
 
               <div className="tabla-container">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Latitud</th>
-                    <th>Longitud</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {puntosControl.map((punto, index) => (
-                    <tr key={index}>
-                      <td>{punto.lat}</td>
-                      <td>{punto.lng}</td>
-                      <td>
-                        {/* <button onClick={() => handleEliminarPunto(index)}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Latitud</th>
+                      <th>Longitud</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {puntosControl.map((punto, index) => (
+                      <tr key={index}>
+                        <td>{punto.lat}</td>
+                        <td>{punto.lng}</td>
+                        <td>
+                          {/* <button onClick={() => handleEliminarPunto(index)}>
                           Eliminar
                         </button> */}
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => handleEliminarPunto(index)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => handleEliminarPunto(index)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              
             </div>
             <div className="modal-buttons"></div>
           </div>

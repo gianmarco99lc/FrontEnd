@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
+import { CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
+import axios from "axios";
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
     username: "",
@@ -22,15 +25,42 @@ const Usuarios = () => {
     setModalVisible(true);
   };
 
-  const handleGuardarUsuario = () => {
-    setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
-    setNuevoUsuario({
-      nombre: "",
-      apellido: "",
-      correo: "",
-      password: "",
-      tipoUsuario: "",
-    });
+  const handleGuardarUsuario = async () => {
+    try {
+      setIsLoading(true);
+
+      setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
+
+      const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
+        Username: nuevoUsuario.username,
+        _Correo: nuevoUsuario.correo,
+        _Nombre: nuevoUsuario.nombre,
+        usuarioTypeDto: {
+        id: nuevoUsuario.tipoUsuario === "victima" ? 2 : 1
+        },
+        imei: "XXX-YY",
+        _Password: nuevoUsuario.password,
+        estatus: true,
+        docIdentidad: "",
+      });
+
+      console.log(respuestaNuevoUsuario);
+
+      setNuevoUsuario({
+        nombre: "",
+        apellido: "",
+        correo: "",
+        password: "",
+        tipoUsuario: "",
+      });
+
+    } catch(error) {
+      console.log(error);
+      alert("error interno");
+    } finally {
+      setIsLoading(false);
+    }
+
     setModalVisible(false);
   };
 
@@ -202,18 +232,21 @@ const Usuarios = () => {
               />
             </RadioGroup>
             <div className="modal-buttons">
-              <button
-                className={
-                  usuarioEditando ? "actualizar-button" : "guardar-button"
-                }
-                onClick={
-                  usuarioEditando
-                    ? handleActualizarUsuario
-                    : handleGuardarUsuario
-                }
-              >
-                {usuarioEditando ? "Actualizar" : "Guardar"}
-              </button>
+              {
+                isLoading ? <CircularProgress /> :
+                <button
+                  className={
+                    usuarioEditando ? "actualizar-button" : "guardar-button"
+                  }
+                  onClick={
+                    usuarioEditando
+                      ? handleActualizarUsuario
+                      : handleGuardarUsuario
+                  }
+                >
+                  {usuarioEditando ? "Actualizar" : "Guardar"}
+                </button>
+              }
               <button className="cancelar-button" onClick={handleCancelar}>
                 Cancelar
               </button>

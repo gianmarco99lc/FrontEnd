@@ -7,6 +7,7 @@ import PuntosControl from "../pages/PuntosControl";
 import Sentencias from "../pages/Sentencias";
 import Usuarios from "../pages/Usuarios";
 import ZonasSeguridad from "../pages/ZonasSeguridad";
+import { Salir } from "../pages/Salir";
 
 export const AuthenticatedRoutes = () => {
   return (
@@ -18,6 +19,7 @@ export const AuthenticatedRoutes = () => {
       <Route path="/sentencias" element={<Sentencias/>} />
       <Route path="/usuarios" element={<Usuarios/>} />
       <Route path="/zonasdeseguridad" element={<ZonasSeguridad/>} />
+      <Route path="/salir" element={<Salir />} />
     </Routes>
   );
 }

@@ -5,6 +5,7 @@ import BookIcon from '@mui/icons-material/Book';
 import MapIcon from '@mui/icons-material/Map';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import SosIcon from '@mui/icons-material/Sos';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export const SidebarData = [
     {
@@ -36,6 +37,11 @@ export const SidebarData = [
         tittle: "Alertas",
         icon: <SosIcon />,
         link: "/alertas"
+    },
+    {
+        tittle: "Salir",
+        icon: <LogoutIcon />,
+        link: "/salir"
     }
 ]
 

@@ -8,7 +8,7 @@ import axios from "axios";
 const Sentencias = () => {
   const [sentencias, setSentencias] = useState([]);
   const [victimas, setVictimas] = useState([]);
-  const [agresor, setAgresor] = useState([]);
+  const [agresores, setAgresores] = useState([]);
   const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
   const [nuevaSentencia, setNuevaSentencia] = useState({
     victima: "",
@@ -34,7 +34,7 @@ const Sentencias = () => {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       const usuarios = await axios.get("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/findAll");
-      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresor( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ))
+      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ))
       setIsLoadingUsuarios(false);
     }
 
@@ -132,6 +132,22 @@ const Sentencias = () => {
 
   const emptyData = Array.from({ length: 10 }, (_, index) => index + 1);
 
+  const handleNuevaSentencia = (e, tipo) => {
+    e.preventDefault();
+    if (tipo === "agresor") {
+      setNuevaSentencia({
+            ...nuevaSentencia,
+            victima: victimas.find( victima => victima.id === parseInt(e.target.value) )
+      });
+    } else {
+      setNuevaSentencia({
+        ...nuevaSentencia,
+        agresor: agresores.find( agresor => agresor.id === parseInt(e.target.value) )
+      });
+    }
+
+  }
+
   return (
     <div className="contenedor-sentencias">
       <div className="titulo">
@@ -220,13 +236,13 @@ const Sentencias = () => {
               <select
                 name="victima"
                 value={nuevaSentencia.victima}
-                onChange={(e) =>
-                  setNuevaSentencia({
-                    ...nuevaSentencia,
-                    // victima: parseInt(e.target.value),
-                    victima: nuevaSentencia.victima
-                  })
-                }
+                onChange={(e) => handleNuevaSentencia(e, "victima")}
+                //   setNuevaSentencia({
+                //     ...nuevaSentencia,
+                //     // victima: parseInt(e.target.value),
+                //     victima: nuevaSentencia.victima
+                //   })
+                // }
               >
                 {
                   victimas.map( victima => (<option value={victima.id.toString()}>{victima.nombre}</option>) )
@@ -242,16 +258,16 @@ const Sentencias = () => {
               <select
                 name="agresor"
                 value={nuevaSentencia.agresor}
-                onChange={(e) =>
-                  setNuevaSentencia({
-                    ...nuevaSentencia,
-                    // agresor: parseInt(e.target.value),
-                    agresor: nuevaSentencia.agresor
-                  })
-                }
+                onChange={(e) => handleNuevaSentencia(e, "agresor")}
+                  // setNuevaSentencia({
+                  //   ...nuevaSentencia,
+                  //   // agresor: parseInt(e.target.value),
+                  //   agresor: nuevaSentencia.agresor
+                  // })
+                // }
               >
                 {
-                  agresor.map( agresor => (<option value={agresor.id.toString()}>{agresor.nombre}</option>) )
+                  agresores.map( agresor => (<option value={agresor.id.toString()}>{agresor.nombre}</option>) )
                 }
               </select>
             }

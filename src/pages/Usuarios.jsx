@@ -43,7 +43,7 @@ const Usuarios = () => {
       setErrores(prev => ({...prev, password: "Contraseña no puede estar vacío o tener una longitud menor a 3 caracteres"}));
     if (!regex.test(nuevoUsuario.correo))
       setErrores(prev => ({...prev, correo: "Correo debe tener un formato válido"}));
-    if (nuevoUsuario.tipoUsuario !== "agresor" || nuevoUsuario.tipoUsuario !== "victima")
+    if (nuevoUsuario.tipoUsuario !== "agresor" && nuevoUsuario.tipoUsuario !== "victima")
       setErrores(prev => ({...prev, tipoUsuario: "Tipo de usuario debe ser una opción válida"}));
 
     if (Object.keys(errores).length > 0) {

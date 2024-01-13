@@ -149,7 +149,8 @@ const Usuarios = () => {
     setModalVisible(true);
   };
 
-  const handleEliminarUsuario = (id) => {
+  const handleEliminarUsuario = (e, id) => {
+    e.preventDefault();
     setUsuarios((prevUsuarios) =>
       prevUsuarios.filter((usuario) => usuario.id !== id)
     );
@@ -207,7 +208,7 @@ const Usuarios = () => {
                         </button>
                         <IconButton
                           aria-label="delete"
-                          onClick={() => handleEliminarUsuario(usuario.id)}
+                          onClick={(e) => handleEliminarUsuario(e, usuario.id)}
                         >
                           <DeleteIcon />
                         </IconButton>

@@ -1,9 +1,10 @@
 .App {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 15px 0;
 }
 
 body {
@@ -15,6 +16,9 @@ body {
     height: 100%;
     width: 220px;
     background-color: #2f4050;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .SidebarList {
@@ -60,8 +64,8 @@ body {
 .contenedor-usuarios {
     display: flex;
     flex-direction: column;
-    width: calc(100vw - 220px);
-    height: 100vh;
+    
+    
     align-items: center;
     justify-content: center;
     background-color: #fff;

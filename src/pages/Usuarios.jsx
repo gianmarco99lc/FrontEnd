@@ -42,6 +42,7 @@ const Usuarios = () => {
         correo: usuario._Correo,
         password: usuario._Password,
         tipoUsuario: usuario.usuarioTypeDto.id === 1 ? "Agresor" : "Víctima",
+        id: usuario.id
       }] ))
       setIsLoadingUsuarios(false);
     }

@@ -37,6 +37,8 @@ const Usuarios = () => {
       mensajesDeError.push("Contraseña no puede estar vacío o tener una longitud menor a 3 caracteres");
     if (!regex.test(nuevoUsuario.correo))
       mensajesDeError.push("Correo debe tener un formato válido");
+    if (nuevoUsuario.tipoUsuario !== "agresor" || nuevoUsuario.tipoUsuario !== "victima")
+      mensajesDeError.push("Tipo de usuario debe ser una opción válida");
 
     if (mensajesDeError.length > 0) {
       setErrores(mensajesDeError);
@@ -285,11 +287,11 @@ const Usuarios = () => {
                 Cancelar
               </button>
             </div>
+            {
+              errores.length > 0 &&
+              <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span style={{color: "red"}}>{error}</span>)) }</div>
+            }
           </div>
-          {
-            errores.length > 0 &&
-            <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span style={{color: "red"}}>{error}</span>)) }</div>
-          }
         </div>
       )}
     </div>

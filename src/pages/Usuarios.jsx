@@ -36,7 +36,13 @@ const Usuarios = () => {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       const usuarios = await axios.get("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/findAll");
-      usuarios.data.response.map( usuario => setUsuarios( prev => [...prev, {...usuario}] ))
+      usuarios.data.response.map( usuario => setUsuarios( prev => [...prev, {
+        nombre: usuario._Nombre,
+        username: usuario._Username,
+        correo: usuario._Correo,
+        password: usuario._Password,
+        tipoUsuario: usuario.usuarioTypeDto.id === 1 ? "Agresor" : "Víctima",
+      }] ))
       setIsLoadingUsuarios(false);
     }
 

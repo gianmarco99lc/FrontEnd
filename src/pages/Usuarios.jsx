@@ -93,6 +93,7 @@ const Usuarios = () => {
         setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
       }
 
+      setModalVisible(false);
 
     } catch(error) {
       console.log(error);
@@ -101,7 +102,6 @@ const Usuarios = () => {
       setIsLoading(false);
     }
 
-    setModalVisible(false);
   };
 
   const handleActualizarUsuario = () => {

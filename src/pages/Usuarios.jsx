@@ -40,6 +40,9 @@ const Usuarios = () => {
       // setUsuarios([usuarios.data]);
       setIsLoadingUsuarios(false);
     }
+
+    obtenerUsuarios();
+
   }, []);
 
   const validacionesNuevoUsuario = () => {

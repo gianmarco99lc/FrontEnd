@@ -44,7 +44,7 @@ const Usuarios = () => {
     if (!regex.test(nuevoUsuario.correo))
       setErrores(prev => ({...prev, correo: "Correo debe tener un formato válido"}));
     if (nuevoUsuario.tipoUsuario !== "agresor" || nuevoUsuario.tipoUsuario !== "victima")
-      setErrores(prev => ({...prev, nuevoUsuario: "Tipo de usuario debe ser una opción válida"}));
+      setErrores(prev => ({...prev, tipoUsuario: "Tipo de usuario debe ser una opción válida"}));
 
     if (Object.keys(errores).length > 0) {
       return false;
@@ -58,10 +58,7 @@ const Usuarios = () => {
     try {
       setIsLoading(true);
 
-      if (!validacionesNuevoUsuario()) {
-        alert("Error en los campos de formulario");
-      }
-      else {
+      if (validacionesNuevoUsuario()) {
         const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
           _Username: nuevoUsuario.username,
           _Correo: nuevoUsuario.correo,
@@ -93,7 +90,6 @@ const Usuarios = () => {
         setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
         setModalVisible(false);
       }
-
 
     } catch(error) {
       console.log(error);

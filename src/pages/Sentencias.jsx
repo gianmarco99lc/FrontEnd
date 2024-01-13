@@ -5,6 +5,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 const Sentencias = () => {
   const [sentencias, setSentencias] = useState([]);
+  const [victimas, setVictimas] = useState([]);
+  const [agresor, setAgresor] = useState([]);
+  const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
   const [nuevaSentencia, setNuevaSentencia] = useState({
     victima: "",
     agresor: "",
@@ -25,6 +28,17 @@ const Sentencias = () => {
   const handleAgregarSentencia = () => {
     setModalVisible(true);
   };
+
+  useEffect(() => {
+    const obtenerUsuarios = async () => {
+      const usuarios = await axios.get("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/findAll");
+      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresor( prev => [...prev, {id: usuario.id, username: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, username: usuario._Nombre}] ))
+      setIsLoadingUsuarios(false);
+    }
+
+    obtenerUsuarios();
+
+  }, []);
 
   const handleGuardarSentencia = () => {
     setSentencias([
@@ -199,38 +213,44 @@ const Sentencias = () => {
               {sentenciaEditando ? "Editar sentencia" : "Nueva sentencia"}
             </h2>
             <label>Víctima:</label>
-            <select
-              name="victima"
-              value={nuevaSentencia.victima}
-              onChange={(e) =>
-                setNuevaSentencia({
-                  ...nuevaSentencia,
-                  victima: e.target.value,
-                })
-              }
-            >
-              {}
-              <option value="opcion1">Opción 1</option>
-              <option value="opcion2">Opción 2</option>
-              {/* Agrega más opciones según sea necesario */}
-            </select>
-
+            {
+              isLoadingUsuarios ? <CircularProgress /> :
+              <select
+                name="victima"
+                value={nuevaSentencia.victima}
+                onChange={(e) =>
+                  setNuevaSentencia({
+                    ...nuevaSentencia,
+                    victima: parseInt(e.target.value),
+                  })
+                }
+              >
+                {
+                  victimas.map( victima => (<option value={victima.id.toString()}>{victima.nombre}</option>) )
+                }
+                {/* <option value="opcion1">Opción 1</option>
+                <option value="opcion2">Opción 2</option> */}
+                {/* Agrega más opciones según sea necesario */}
+              </select>
+            }
             <label>Agresor:</label>
-            <select
-              name="agresor"
-              value={nuevaSentencia.agresor}
-              onChange={(e) =>
-                setNuevaSentencia({
-                  ...nuevaSentencia,
-                  agresor: e.target.value,
-                })
-              }
-            >
-              {}
-              <option value="opcionA">Opción A</option>
-              <option value="opcionB">Opción B</option>
-              {/* Agrega más opciones según sea necesario */}
-            </select>
+            {
+              isLoadingUsuarios ? <CircularProgress /> :
+              <select
+                name="agresor"
+                value={nuevaSentencia.agresor}
+                onChange={(e) =>
+                  setNuevaSentencia({
+                    ...nuevaSentencia,
+                    agresor: parseInt(e.target.value),
+                  })
+                }
+              >
+                {
+                  agresor.map( agresor => (<option value={agresor.id.toString()}>{agresor.nombre}</option>) )
+                }
+              </select>
+            }
 
             {/* Otros campos del formulario */}
             <label>Tiempos de Control:</label>

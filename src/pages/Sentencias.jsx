@@ -134,15 +134,43 @@ const Sentencias = () => {
 
   const handleNuevaSentencia = (e, tipo) => {
     e.preventDefault();
+    // victima: "",
+    // agresor: "",
+    // tiemposControl: "",
+    // distanciasAlejamiento: "",
+    // zonasSeguridad: [],
     if (tipo === "agresor") {
       setNuevaSentencia({
-            ...nuevaSentencia,
-            victima: victimas.find( victima => victima.id === parseInt(e.target.value) )
+        ...nuevaSentencia,
+        victima: victimas.find( victima => victima.id === parseInt(e.target.value) ).nombre
       });
-    } else {
+    }
+
+    if (tipo === "victima"){
       setNuevaSentencia({
         ...nuevaSentencia,
-        agresor: agresores.find( agresor => agresor.id === parseInt(e.target.value) )
+        agresor: agresores.find( agresor => agresor.id === parseInt(e.target.value) ).nombre
+      });
+    }
+
+    if (tipo === "tiemposControl"){
+      setNuevaSentencia({
+        ...nuevaSentencia,
+        tiemposControl: e.target.value
+      });
+    }
+
+    if (tipo === "distanciasAlejamiento") {
+      setNuevaSentencia({
+        ...nuevaSentencia,
+        distanciasAlejamiento: e.target.value
+      });
+    }
+
+    if (tipo === "zonasSeguridad") {
+      setNuevaSentencia({
+        ...nuevaSentencia,
+        zonasSeguridad: e.target.value
       });
     }
 
@@ -277,24 +305,19 @@ const Sentencias = () => {
             <input
               type="text"
               value={nuevaSentencia.tiemposControl}
-              onChange={(e) =>
-                setNuevaSentencia({
-                  ...nuevaSentencia,
-                  tiemposControl: e.target.value,
-                })
-              }
+              onChange={(e) => handleNuevaSentencia(e, "tiemposContol")}
+              //   setNuevaSentencia({
+              //     ...nuevaSentencia,
+              //     tiemposControl: e.target.value,
+              //   })
+              // }
             />
 
             <label>Distancias de Alejamiento:</label>
             <input
               type="text"
               value={nuevaSentencia.distanciasAlejamiento}
-              onChange={(e) =>
-                setNuevaSentencia({
-                  ...nuevaSentencia,
-                  distanciasAlejamiento: e.target.value,
-                })
-              }
+              onChange={(e) => handleNuevaSentencia(e, "distanciasAlejamiento")}
             />
 
             <div className="modal-buttons">

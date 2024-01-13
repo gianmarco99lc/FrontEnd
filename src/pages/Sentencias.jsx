@@ -223,7 +223,8 @@ const Sentencias = () => {
                 onChange={(e) =>
                   setNuevaSentencia({
                     ...nuevaSentencia,
-                    victima: parseInt(e.target.value),
+                    // victima: parseInt(e.target.value),
+                    victima: nuevaSentencia.victima
                   })
                 }
               >
@@ -244,7 +245,8 @@ const Sentencias = () => {
                 onChange={(e) =>
                   setNuevaSentencia({
                     ...nuevaSentencia,
-                    agresor: parseInt(e.target.value),
+                    // agresor: parseInt(e.target.value),
+                    agresor: nuevaSentencia.agresor
                   })
                 }
               >

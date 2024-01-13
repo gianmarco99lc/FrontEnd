@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -11,6 +11,7 @@ import axios from "axios";
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
   const [errores, setErrores] = useState({
     nombre: "",
     username: "",
@@ -31,6 +32,15 @@ const Usuarios = () => {
   const handleAgregarUsuario = () => {
     setModalVisible(true);
   };
+
+  useEffect(() => {
+    const obtenerUsuarios = async () => {
+      const usuarios = await axios.get("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/findAll");
+      console.log(usuarios);
+      // setUsuarios([usuarios.data]);
+      setIsLoadingUsuarios(false);
+    }
+  }, []);
 
   const validacionesNuevoUsuario = () => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -157,56 +167,59 @@ const Usuarios = () => {
         </Button>
       </div>
       <div>
-        <table className="tabla-usuarios">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Password</th>
-              <th>Tipo de Usuario</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((usuario) => {
-                emptyData.pop()
-                return (
-                  <tr key={usuario.id}>
-                    <td>{usuario.nombre}</td>
-                    <td>{usuario.username}</td>
-                    <td>{usuario.correo}</td>
-                    <td>{usuario.password}</td>
-                    <td>{usuario.tipoUsuario}</td>
-                    <td>
-                      <button
-                        className="edit-button"
-                        onClick={() => handleEditarUsuario(usuario)}
-                      >
-                        Editar
-                      </button>
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleEliminarUsuario(usuario.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </td>
-                  </tr>
-                )
-            })}
-            {emptyData.map((id) => (
-              <tr key={id}>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* No hay acciones en las filas vacías */}</td>
+        {
+          isLoadingUsuarios ? <CircularProgress /> :
+          <table className="tabla-usuarios">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Password</th>
+                <th>Tipo de Usuario</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {usuarios.map((usuario) => {
+                  emptyData.pop()
+                  return (
+                    <tr key={usuario.id}>
+                      <td>{usuario.nombre}</td>
+                      <td>{usuario.username}</td>
+                      <td>{usuario.correo}</td>
+                      <td>{usuario.password}</td>
+                      <td>{usuario.tipoUsuario}</td>
+                      <td>
+                        <button
+                          className="edit-button"
+                          onClick={() => handleEditarUsuario(usuario)}
+                        >
+                          Editar
+                        </button>
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handleEliminarUsuario(usuario.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </td>
+                    </tr>
+                  )
+              })}
+              {emptyData.map((id) => (
+                <tr key={id}>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* No hay acciones en las filas vacías */}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
       </div>
 
       {modalVisible && (

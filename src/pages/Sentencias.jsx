@@ -134,12 +134,14 @@ const Sentencias = () => {
 
   const handleNuevaSentencia = (e, tipo) => {
     e.preventDefault();
-    console.log("HEY!", e.target.value);
-    // victima: "",
-    // agresor: "",
-    // tiemposControl: "",
-    // distanciasAlejamiento: "",
-    // zonasSeguridad: [],
+    if (tipo === "agresor" || tipo === "victima") {
+      if (tipo === "victima")
+        console.log("VICTIMA", victimas.find( victima => victima.id === parseInt(e.target.value) ).nombre);
+      else
+        console.log("AGRESOR", agresores.find( agresor => agresor.id === parseInt(e.target.value) ).nombre);
+      console.log("HEY!", e.target.value);
+    }
+
     if (tipo === "agresor") {
       setNuevaSentencia({
         ...nuevaSentencia,

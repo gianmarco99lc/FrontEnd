@@ -134,25 +134,21 @@ const Sentencias = () => {
 
   const handleNuevaSentencia = (e, tipo) => {
     e.preventDefault();
-    if (tipo === "agresor" || tipo === "victima") {
-      if (tipo === "victima")
-        console.log("VICTIMA", victimas.find( victima => victima.id === parseInt(e.target.value) ).nombre);
-      else
-        console.log("AGRESOR", agresores.find( agresor => agresor.id === parseInt(e.target.value) ).nombre);
-      console.log("HEY!", e.target.value);
-    }
+    
+    
 
-    if (tipo === "agresor") {
+    if (tipo === "victima") {
+      
       setNuevaSentencia({
         ...nuevaSentencia,
-        victima: victimas.find( victima => victima.id === parseInt(e.target.value) ).nombre
+        victima: victimas.find( victima => victima.id === parseInt(e.target.value) ).id.toString()
       });
     }
 
-    if (tipo === "victima"){
+    if (tipo === "agresor"){
       setNuevaSentencia({
         ...nuevaSentencia,
-        agresor: agresores.find( agresor => agresor.id === parseInt(e.target.value) ).nombre
+        agresor: agresores.find( agresor => agresor.id === parseInt(e.target.value) ).id.toString()
       });
     }
 
@@ -179,6 +175,12 @@ const Sentencias = () => {
 
   }
 
+  useEffect(() => {
+
+    console.log("nueva sentencia", nuevaSentencia)
+
+  },[nuevaSentencia]) 
+
   return (
     <div className="contenedor-sentencias">
       <div className="titulo">
@@ -204,8 +206,8 @@ const Sentencias = () => {
           <tbody>
             {sentencias.map((sentencia) => (
               <tr key={sentencia.id}>
-                <td>{sentencia.victima}</td>
-                <td>{sentencia.agresor}</td>
+                <td>{victimas.find(victima => victima.id === parseInt(sentencia.victima)).nombre}</td>
+                <td>{agresores.find(agresor => agresor.id === parseInt(sentencia.agresor)).nombre}</td>
                 <td>{sentencia.tiemposControl}</td>
                 <td>{sentencia.distanciasAlejamiento}</td>
                 <td>
@@ -275,6 +277,7 @@ const Sentencias = () => {
                 //   })
                 // }
               >
+                <option value="" disabled selected>Selecciona una opción</option>
                 {
                   victimas.map( victima => (<option value={victima.id.toString()}>{victima.nombre}</option>) )
                 }
@@ -297,6 +300,7 @@ const Sentencias = () => {
                   // })
                 // }
               >
+                <option value="" disabled selected>Selecciona una opción</option>
                 {
                   agresores.map( agresor => (<option value={agresor.id.toString()}>{agresor.nombre}</option>) )
                 }

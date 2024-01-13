@@ -52,6 +52,9 @@ const Usuarios = () => {
     try {
       setIsLoading(true);
 
+      if (!validacionesNuevoUsuario())
+        throw new Error("Hay error en las validaciones mano");
+
       const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
         _Username: nuevoUsuario.username,
         _Correo: nuevoUsuario.correo,

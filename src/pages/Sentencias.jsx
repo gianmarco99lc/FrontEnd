@@ -134,6 +134,7 @@ const Sentencias = () => {
 
   const handleNuevaSentencia = (e, tipo) => {
     e.preventDefault();
+    console.log("HEY!", e.target.value);
     // victima: "",
     // agresor: "",
     // tiemposControl: "",
@@ -305,7 +306,7 @@ const Sentencias = () => {
             <input
               type="text"
               value={nuevaSentencia.tiemposControl}
-              onChange={(e) => handleNuevaSentencia(e, "tiemposContol")}
+              onChange={(e) => handleNuevaSentencia(e, "tiemposControl")}
               //   setNuevaSentencia({
               //     ...nuevaSentencia,
               //     tiemposControl: e.target.value,

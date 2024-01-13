@@ -52,38 +52,41 @@ const Usuarios = () => {
     try {
       setIsLoading(true);
 
-      if (!validacionesNuevoUsuario())
-        throw new Error("Hay error en las validaciones mano");
-
-      const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
-        _Username: nuevoUsuario.username,
-        _Correo: nuevoUsuario.correo,
-        _Nombre: nuevoUsuario.nombre,
-        usuarioTypeDto: {
-        id: nuevoUsuario.tipoUsuario === "victima" ? 2 : 1
+      if (!validacionesNuevoUsuario()) {
+        alert("Error en los campos de formulario");
+      }
+      else {
+        const respuestaNuevoUsuario = await axios.post("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/insert", {
+          _Username: nuevoUsuario.username,
+          _Correo: nuevoUsuario.correo,
+          _Nombre: nuevoUsuario.nombre,
+          usuarioTypeDto: {
+          id: nuevoUsuario.tipoUsuario === "victima" ? 2 : 1
+          },
+          imei: "XXX-YY",
+          _Password: nuevoUsuario.password,
+          estatus: true,
+          docIdentidad: "",
         },
-        imei: "XXX-YY",
-        _Password: nuevoUsuario.password,
-        estatus: true,
-        docIdentidad: "",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
 
-      console.log(respuestaNuevoUsuario);
+        console.log(respuestaNuevoUsuario);
 
-      setNuevoUsuario({
-        nombre: "",
-        apellido: "",
-        correo: "",
-        password: "",
-        tipoUsuario: "",
-      });
+        setNuevoUsuario({
+          nombre: "",
+          apellido: "",
+          correo: "",
+          password: "",
+          tipoUsuario: "",
+        });
 
-      setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
+        setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
+      }
+
 
     } catch(error) {
       console.log(error);
@@ -281,12 +284,12 @@ const Usuarios = () => {
               <button className="cancelar-button" onClick={handleCancelar}>
                 Cancelar
               </button>
-              {
-                errores.length > 0 &&
-                <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span>{error}</span>)) }</div>
-              }
             </div>
           </div>
+          {
+            errores.length > 0 &&
+            <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span style={{color: "red"}}>{error}</span>)) }</div>
+          }
         </div>
       )}
     </div>

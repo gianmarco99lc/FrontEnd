@@ -34,7 +34,7 @@ const Sentencias = () => {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       const usuarios = await axios.get("http://localhost:8080/cmcapp-backend-1.0/api/v1/usuarios/findAll");
-      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresor( prev => [...prev, {id: usuario.id, username: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, username: usuario._Nombre}] ))
+      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresor( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, username: usuario._Nombre}] ))
       setIsLoadingUsuarios(false);
     }
 

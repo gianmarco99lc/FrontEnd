@@ -11,6 +11,7 @@ import axios from "axios";
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errores, setErrores] = useState([]);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
     username: "",
@@ -24,6 +25,28 @@ const Usuarios = () => {
   const handleAgregarUsuario = () => {
     setModalVisible(true);
   };
+
+  const validacionesNuevoUsuario = () => {
+    const mensajesDeError = [];
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (nuevoUsuario.nombre.trim().length < 3)
+      mensajesDeError.push("Nombre no puede estar vacío o tener una longitud menor a 3 caracteres");
+    if (nuevoUsuario.username.trim().length < 3)
+      mensajesDeError.push("Nombre de usuario no puede estar vacío o tener una longitud menor a 3 caracteres");
+    if (nuevoUsuario.password.trim().length < 3)
+      mensajesDeError.push("Contraseña no puede estar vacío o tener una longitud menor a 3 caracteres");
+    if (!regex.test(nuevoUsuario.correo))
+      mensajesDeError.push("Correo debe tener un formato válido");
+
+    if (mensajesDeError.length > 0) {
+      setErrores(mensajesDeError);
+      return false;
+    }
+    else {
+      setErrores([]);
+      return true;
+    }
+  }
 
   const handleGuardarUsuario = async () => {
     try {
@@ -255,6 +278,10 @@ const Usuarios = () => {
               <button className="cancelar-button" onClick={handleCancelar}>
                 Cancelar
               </button>
+              {
+                errores.length > 0 &&
+                <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span>{error}</span>)) }</div>
+              }
             </div>
           </div>
         </div>

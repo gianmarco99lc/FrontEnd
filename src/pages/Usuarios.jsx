@@ -11,7 +11,13 @@ import axios from "axios";
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [errores, setErrores] = useState([]);
+  const [errores, setErrores] = useState({
+    nombre: "",
+    username: "",
+    correo: "",
+    password: "",
+    tipoUsuario: ""
+  });
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
     username: "",
@@ -27,25 +33,23 @@ const Usuarios = () => {
   };
 
   const validacionesNuevoUsuario = () => {
-    const mensajesDeError = [];
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setErrores({});
     if (nuevoUsuario.nombre.trim().length < 3)
-      mensajesDeError.push("Nombre no puede estar vacío o tener una longitud menor a 3 caracteres");
+      setErrores(prev => ({...prev, nombre: "Nombre no puede estar vacío o tener una longitud menor a 3 caracteres"}));
     if (nuevoUsuario.username.trim().length < 3)
-      mensajesDeError.push("Nombre de usuario no puede estar vacío o tener una longitud menor a 3 caracteres");
+      setErrores(prev => ({...prev, username: "Nombre de usuario no puede estar vacío o tener una longitud menor a 3 caracteres"}));
     if (nuevoUsuario.password.trim().length < 3)
-      mensajesDeError.push("Contraseña no puede estar vacío o tener una longitud menor a 3 caracteres");
+      setErrores(prev => ({...prev, password: "Contraseña no puede estar vacío o tener una longitud menor a 3 caracteres"}));
     if (!regex.test(nuevoUsuario.correo))
-      mensajesDeError.push("Correo debe tener un formato válido");
+      setErrores(prev => ({...prev, correo: "Correo debe tener un formato válido"}));
     if (nuevoUsuario.tipoUsuario !== "agresor" || nuevoUsuario.tipoUsuario !== "victima")
-      mensajesDeError.push("Tipo de usuario debe ser una opción válida");
+      setErrores(prev => ({...prev, nuevoUsuario: "Tipo de usuario debe ser una opción válida"}));
 
-    if (mensajesDeError.length > 0) {
-      setErrores(mensajesDeError);
+    if (Object.keys(errores).length > 0) {
       return false;
     }
     else {
-      setErrores([]);
       return true;
     }
   }
@@ -221,6 +225,7 @@ const Usuarios = () => {
                 setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })
               }
             />
+            <div className="error-message">{errores.nombre}</div>
             <label>Username:</label>
             <input
               type="text"
@@ -229,6 +234,7 @@ const Usuarios = () => {
                 setNuevoUsuario({ ...nuevoUsuario, username: e.target.value })
               }
             />
+            <div className="error-message">{errores.username}</div>
             <label>Correo:</label>
             <input
               type="text"
@@ -237,6 +243,7 @@ const Usuarios = () => {
                 setNuevoUsuario({ ...nuevoUsuario, correo: e.target.value })
               }
             />
+            <div className="error-message">{errores.correo}</div>
             <label>Password:</label>
             <input
               type="password"
@@ -245,6 +252,7 @@ const Usuarios = () => {
                 setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })
               }
             />
+            <div className="error-message">{errores.password}</div>
             <RadioGroup
               aria-label="tipoUsuario"
               name="tipoUsuario"
@@ -267,6 +275,7 @@ const Usuarios = () => {
                 label="Agresor"
               />
             </RadioGroup>
+            <div className="error-message">{errores.tipoUsuario}</div>
             <div className="modal-buttons">
               {
                 isLoading ? <CircularProgress /> :
@@ -287,10 +296,6 @@ const Usuarios = () => {
                 Cancelar
               </button>
             </div>
-            {
-              errores.length > 0 &&
-              <div style={{display: "flex", flexDirection: "column"}}>{ errores.map(error => (<span style={{color: "red"}}>{error}</span>)) }</div>
-            }
           </div>
         </div>
       )}

@@ -91,9 +91,9 @@ const Usuarios = () => {
         });
 
         setUsuarios([...usuarios, { ...nuevoUsuario, id: usuarios.length + 1 }]);
+        setModalVisible(false);
       }
 
-      setModalVisible(false);
 
     } catch(error) {
       console.log(error);

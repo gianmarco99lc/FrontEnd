@@ -22,7 +22,7 @@ const Home = () => {
   //GET
   
 useEffect(() => {
-  fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/todos")
+  fetch("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin/todos")
     .then((response) => response.json())
     .then((data) => {
       console.log("Data from API:", data);
@@ -86,7 +86,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/cmcapp-backend-1.0/api/v1/admin", {
+      const response = await fetch("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

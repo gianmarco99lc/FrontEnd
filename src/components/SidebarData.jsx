@@ -6,6 +6,7 @@ import MapIcon from '@mui/icons-material/Map';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import SosIcon from '@mui/icons-material/Sos';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SpatialTrackingIcon from '@mui/icons-material/SpatialTracking';
 
 export const SidebarData = [
     {
@@ -37,6 +38,11 @@ export const SidebarData = [
         tittle: "Alertas",
         icon: <SosIcon />,
         link: "/alertas"
+    },
+    {
+        tittle: "Conexion",
+        icon: <SpatialTrackingIcon />,
+        link: "/conexion"
     },
     {
         tittle: "Salir",

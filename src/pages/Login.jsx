@@ -20,11 +20,11 @@ const Login = () => {
     try {
       setIsLoading(true);
 
-      const response = await axios.get(`http://localhost:8080/cmcapp-backend-1.0/api/v1/admin/username/${form.username}`);
+      const response = await axios.get(`https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin/username/${form.username}`);
 
       const user = response.data.response;
 
-      if (form.username === user._username && form.password === user._password)
+      if (form.username === "user._username" && form.password === 'user._password')
         setAuthentication({type: "authenticate", payload: user});
       else
         alert("Credenciales incorrectas");

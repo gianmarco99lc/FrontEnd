@@ -20,11 +20,15 @@ const Login = () => {
     try {
       setIsLoading(true);
 
-      const response = await axios.get(`https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin/username/${form.username}`);
+      console.log("login", form.username, form.password);
+
+      const response = await axios.get(`/api/admin/username/${form.username}`);
+
+      console.log("respuesta", response.data.response);
 
       const user = response.data.response;
 
-      if (form.username === "user._username" && form.password === 'user._password')
+      if (form.username === user._username && form.password === user._password)
         setAuthentication({type: "authenticate", payload: user});
       else
         alert("Credenciales incorrectas");

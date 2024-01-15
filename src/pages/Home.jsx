@@ -20,9 +20,9 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   //GET
-  
+
 useEffect(() => {
-  fetch("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin/todos")
+  fetch("/api/admin/todos")
     .then((response) => response.json())
     .then((data) => {
       console.log("Data from API:", data);
@@ -41,7 +41,7 @@ useEffect(() => {
     });
 }, []);
 
-  
+
 
 
   const handleAgregarAdmin = () => {
@@ -86,7 +86,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/admin", {
+      const response = await fetch("/api/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +123,7 @@ useEffect(() => {
       console.error("Error al realizar la solicitud:", error);
       alert("Error al realizar la solicitud. Consulta la consola para más detalles.");
     }
-  
+
 
     // setAdmins([...Admins, { ...nuevoAdmin, id: Admins.length + 1 }]);
     // setNuevoAdmin({

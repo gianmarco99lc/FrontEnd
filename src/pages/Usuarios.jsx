@@ -35,7 +35,7 @@ const Usuarios = () => {
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
-      const usuarios = await axios.get("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/usuarios/findAll");
+      const usuarios = await axios.get("/api/usuarios/findAll");
       usuarios.data.response.map( usuario => setUsuarios( prev => [...prev, {
         nombre: usuario._Nombre,
         username: usuario._Username,
@@ -78,7 +78,7 @@ const Usuarios = () => {
       setIsLoading(true);
 
       if (validacionesNuevoUsuario()) {
-        const respuestaNuevoUsuario = await axios.post("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/usuarios/insert", {
+        const respuestaNuevoUsuario = await axios.post("/api/usuarios/insert", {
           _Username: nuevoUsuario.username,
           _Correo: nuevoUsuario.correo,
           _Nombre: nuevoUsuario.nombre,

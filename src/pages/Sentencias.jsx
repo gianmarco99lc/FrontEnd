@@ -33,7 +33,7 @@ const Sentencias = () => {
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
-      const usuarios = await axios.get("https://crucial-healthy-dinosaur.ngrok-free.app/cmcapp-backend-1.0/api/v1/usuarios/findAll");
+      const usuarios = await axios.get("/api/usuarios/findAll");
       usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ))
       setIsLoadingUsuarios(false);
     }
@@ -42,7 +42,27 @@ const Sentencias = () => {
 
   }, []);
 
-  const handleGuardarSentencia = () => {
+  const handleGuardarSentencia = async () => {
+
+    console.log("API", import.meta.env.VITE_APP_SERVER_URL);
+
+    const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/sentencia/insert`, {
+      _distanciaMinima: nuevaSentencia.distanciasAlejamiento,
+      _tiempo_control: nuevaSentencia.tiemposControl,
+      _victima: {
+        id: nuevaSentencia.victima
+      },
+      _agresor: {
+        id: nuevaSentencia.agresor
+      }
+    }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    console.log("respuesta", response);
+
     setSentencias([
       ...sentencias,
       { ...nuevaSentencia, id: sentencias.length + 1 },
@@ -133,12 +153,11 @@ const Sentencias = () => {
   const emptyData = Array.from({ length: 10 }, (_, index) => index + 1);
 
   const handleNuevaSentencia = (e, tipo) => {
+
     e.preventDefault();
-    
-    
 
     if (tipo === "victima") {
-      
+
       setNuevaSentencia({
         ...nuevaSentencia,
         victima: victimas.find( victima => victima.id === parseInt(e.target.value) ).id.toString()
@@ -174,12 +193,6 @@ const Sentencias = () => {
     }
 
   }
-
-  useEffect(() => {
-
-    console.log("nueva sentencia", nuevaSentencia)
-
-  },[nuevaSentencia]) 
 
   return (
     <div className="contenedor-sentencias">
@@ -359,7 +372,17 @@ const Sentencias = () => {
                 </p>
               </div>
             ))}
+            <div style={{display: "flex", flexDirection: "column"}}>
+              <label>Nombre de la zona</label>
+              <input name="nombreZona" onChange={(e) => {}}/>
+            </div>
             <div className="modal-buttons">
+              <button className="cancelar-button" onClick={handleCancelarZonas}>
+                + Agregar otro
+              </button>
+              <button className="cancelar-button" onClick={handleCancelarZonas}>
+                Guardar
+              </button>
               <button className="cancelar-button" onClick={handleCancelarZonas}>
                 Cerrar
               </button>

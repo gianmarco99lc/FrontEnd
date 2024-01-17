@@ -30,11 +30,16 @@ const ZonasSeguridad = () => {
     setPuntosControl(nuevaLista);
   };
 
+  const handleNuevo = (e) => {
+    e.preventDefault();
+  }
+
   return (
     <div className="contenedor-usuarios">
       {/* <div className="titulo">
         <h1></h1>
       </div> */}
+      <Button variant="contained" style={{width: "100px"}} onClick={handleNuevo}>Agregar</Button>
       <div className="">
         <table className="tabla-usuarios">
           <thead>

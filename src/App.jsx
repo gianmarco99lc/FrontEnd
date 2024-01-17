@@ -12,6 +12,8 @@ const App = () => {
 
   let Routes = NotAuthenticatedRoutes;
 
+  // let Routes = AuthenticatedRoutes;
+
 
   switch(authState.isAuthenticated) {
     case true:
@@ -22,6 +24,7 @@ const App = () => {
     <div className="App">
       <BrowserRouter>
       { authState.isAuthenticated && <Sidebar />}
+        {/* <Sidebar /> */}
         <Routes />
       </BrowserRouter>
     </div>

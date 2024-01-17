@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Select,
   Table,
@@ -7,75 +7,117 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  CircularProgress
 } from '@mui/material';
+import axios from "axios";
 
 function Conexion() {
-  const [selectedUser, setSelectedUser] = useState('');
+
+  const [selectedUser, setSelectedUser] = useState("-1");
+  const [isConexionLoading, setIsConexionLoading] = useState(false);
   const [conexiones, setConexiones] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [isUsuariosLoading, setUsuariosLoading] = useState(true);
 
   const handleUserChange = (event) => {
     const selectedUserId = event.target.value;
-    setSelectedUser(selectedUserId);
-
-    // Aquí puedes realizar la lógica para obtener las conexiones filtradas por usuario utilizando el ID seleccionado
-    // Puedes hacer una llamada a la API, utilizar una función o cualquier otro método para obtener los datos
-
-    // Ejemplo de datos de conexiones para mostrar en la tabla
-    const conexionesData = [
-      {
-        nombre: 'Conexión 1',
-        tipoUsuario: 'Tipo 1',
-        latitud: 123.456,
-        longitud: 789.012,
-        fecha: '2022-01-01',
-        acciones: 'Acción 1',
-      },
-      {
-        nombre: 'Conexión 2',
-        tipoUsuario: 'Tipo 2',
-        latitud: 789.012,
-        longitud: 123.456,
-        fecha: '2022-02-02',
-        acciones: 'Acción 2',
-      },
-    ];
-
-    setConexiones(conexionesData);
+    console.log("ID seleccionado", selectedUserId);
+    setSelectedUser(usuarios.find( usuario => usuario.id === parseInt(selectedUserId) ).id);
   };
+
+  useEffect(() => {
+    const obtenerUsuarios = async () => {
+      try {
+        const usuarios = await axios.get("/api/usuarios/findAll");
+        setUsuarios( usuarios.data.response.map( usuario => ({nombre: usuario._Nombre, id: usuario.id})) )
+      } catch(error) {
+        console.log(error);
+      } finally {
+        setUsuariosLoading(false);
+      }
+    }
+
+    obtenerUsuarios();
+
+  }, []);
+
+  useEffect(() => {
+    const obtenerData = async () => {
+      try {
+        if (conexiones.length > 0)
+          console.log("Hey", conexiones);
+        setIsConexionLoading(true);
+        const conexionResponse = await axios.get(`/api/conexion/usuario/${selectedUser}`);
+        console.log("Conexion", conexionResponse);
+        if (conexionResponse.data.response !== null) {
+          setConexiones(conexionResponse.data.response.map( conexion => {
+            const fechaHora = new Date(conexion._fecha)
+            return {
+              id: conexion.id,
+              nombre: conexion._usuario._Nombre,
+              tipoUsuario: conexion._usuario.usuarioTypeDto.name,
+              latitud: conexion._latitud,
+              longitud: conexion._longitud,
+              fecha: `${fechaHora.getDate()}/${fechaHora.getMonth() + 1}/${fechaHora.getFullYear()} ${fechaHora.getHours()}:${fechaHora.getMinutes()}`
+            }
+          } ));
+        } else {
+          setConexiones([]);
+        }
+      } catch(error) {
+        console.log(error);
+      } finally {
+        setIsConexionLoading(false);
+      }
+    }
+
+    obtenerData();
+
+  }, [selectedUser])
 
   return (
     <div>
-      <Select value={selectedUser} onChange={handleUserChange}>
-        <option value="">Seleccionar usuario</option>
-        {/* Opciones del select */}
-      </Select>
-
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Tipo de usuario</TableCell>
-              <TableCell>Latitud</TableCell>
-              <TableCell>Longitud</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {conexiones.map((conexion, index) => (
-              <TableRow key={index}>
-                <TableCell>{conexion.nombre}</TableCell>
-                <TableCell>{conexion.tipoUsuario}</TableCell>
-                <TableCell>{conexion.latitud}</TableCell>
-                <TableCell>{conexion.longitud}</TableCell>
-                <TableCell>{conexion.fecha}</TableCell>
-                <TableCell>{conexion.acciones}</TableCell>
+      {
+        isUsuariosLoading ? <CircularProgress /> :
+        <select value={selectedUser.toString()} onChange={handleUserChange}>
+          <option value="-1">Seleccione una opción</option>
+          {
+            ...usuarios.map( usuario => (
+              <option value={usuario.id.toString()}>{usuario.nombre}</option>
+            ) )
+          }
+        </select>
+      }
+      {
+        isConexionLoading ? <CircularProgress /> :
+        conexiones.length === 0 ? <span>Seleccione un usuario</span> :
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Nombre</TableCell>
+                <TableCell>Tipo de usuario</TableCell>
+                <TableCell>Latitud</TableCell>
+                <TableCell>Longitud</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Acciones</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {conexiones.map((conexion, index) => (
+                <TableRow key={index}>
+                  <TableCell>{conexion.nombre}</TableCell>
+                  <TableCell>{conexion.tipoUsuario}</TableCell>
+                  <TableCell>{conexion.latitud}</TableCell>
+                  <TableCell>{conexion.longitud}</TableCell>
+                  <TableCell>{conexion.fecha}</TableCell>
+                  <TableCell>VER</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      }
     </div>
   );
 }

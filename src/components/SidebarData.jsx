@@ -30,11 +30,6 @@ export const SidebarData = [
         link: "/zonasdeseguridad"
     },
     {
-        tittle: "Puntos de control",
-        icon: <ControlPointIcon />,
-        link: "/puntosdecontrol"
-    },
-    {
         tittle: "Alertas",
         icon: <SosIcon />,
         link: "/alertas"

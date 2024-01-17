@@ -33,11 +33,19 @@ const Sentencias = () => {
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
-      const usuarios = await axios.get("/api/usuarios/findAll");
-      usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ))
-      setIsLoadingUsuarios(false);
+      try {
+        console.log("Fetcheando");
+        const usuarios = await axios.get("/api/usuarios/findAll");
+        const sentencias = await axios.get("/api/sentencia/todos");
+        console.log("Mano", sentencias);
+        usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
+        sentencias.data.response.map( sentencia => setSentencias( prev => [...prev, {distanciasMinima: sentencia._distanciaMinima, tiemposControl: sentencia._tiempo_control, victima: sentencia._victima.id, agresor: sentencia._agresor.id}] ) )
+      } catch(error) {
+        console.log(error);
+      } finally {
+        setIsLoadingUsuarios(false);
+      }
     }
-
     obtenerUsuarios();
 
   }, []);
@@ -205,69 +213,59 @@ const Sentencias = () => {
         </Button>
       </div>
       <div>
-        <table className="tabla-sentencias">
-          <thead>
-            <tr>
-              <th>Víctima</th>
-              <th>Agresor</th>
-              <th>Tiempos de Control</th>
-              <th>Distancias de Alejamiento</th>
-              <th>Zona de Seguridad</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sentencias.map((sentencia) => (
-              <tr key={sentencia.id}>
-                <td>{victimas.find(victima => victima.id === parseInt(sentencia.victima)).nombre}</td>
-                <td>{agresores.find(agresor => agresor.id === parseInt(sentencia.agresor)).nombre}</td>
-                <td>{sentencia.tiemposControl}</td>
-                <td>{sentencia.distanciasAlejamiento}</td>
-                <td>
-                  {sentencia.zonasSeguridad.length > 0 ? (
-                    <button
-                      className="ver-button"
-                      onClick={() => handleVerZonas(sentencia.zonasSeguridad)}
-                    >
-                      Ver
-                    </button>
-                  ) : (
+        {
+          isLoadingUsuarios ? <CircularProgress /> :
+          <table className="tabla-sentencias">
+            <thead>
+              <tr>
+                <th>Víctima</th>
+                <th>Agresor</th>
+                <th>Tiempos de Control</th>
+                <th>Distancias de Alejamiento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                console.log("Sentencias", sentencias)
+              }
+              {sentencias.map((sentencia) => (
+                <tr key={sentencia.id}>
+                  {
+                    console.log("Victimas", victimas)
+                  }
+                  <td>{victimas.find(victima => victima.id === sentencia.victima).nombre}</td>
+                  <td>{agresores.find(agresor => agresor.id === sentencia.agresor).nombre}</td>
+                  <td>{sentencia.tiemposControl}</td>
+                  <td>{sentencia.distanciasMinima}</td>
+                  <td>
                     <button
                       className="edit-button"
-                      onClick={() => handleCrearZonas(sentencia)}
+                      onClick={() => handleEditarSentencia(sentencia)}
                     >
-                      Crear
+                      Editar
                     </button>
-                  )}
-                </td>
-                <td>
-                  <button
-                    className="edit-button"
-                    onClick={() => handleEditarSentencia(sentencia)}
-                  >
-                    Editar
-                  </button>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => handleEliminarSentencia(sentencia.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </td>
-              </tr>
-            ))}
-            {emptyData.map((id) => (
-              <tr key={id}>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* Agrega el contenido necesario */}</td>
-                <td>{/* No hay acciones en las filas vacías */}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleEliminarSentencia(sentencia.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+              {emptyData.map((id) => (
+                <tr key={id}>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* Agrega el contenido necesario */}</td>
+                  <td>{/* No hay acciones en las filas vacías */}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
       </div>
 
       {modalVisible && (

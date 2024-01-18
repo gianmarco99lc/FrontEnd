@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Polyline, Polygon } from "@react-google-maps/api";
+import axios from "axios";
 
-const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl }) => {
+const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, setPuntosControl }) => {
+
   const [poligonos, setPoligonos] = useState([]);
 
   const containerStyle = {
@@ -18,11 +20,11 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl }) =
 
   const handleMapClick = (e) => {
     if (!e) return; // Agrega esta línea para manejar el caso en el que e sea null
-  
+
     const { latLng } = e;
     const lat = latLng.lat();
     const lng = latLng.lng();
-  
+
     handleAgregarPunto({ lat, lng });
   };
 
@@ -33,16 +35,22 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl }) =
     }));
 
     // Agregar el polígono a la lista de polígonos
-    setPoligonos([...poligonos, puntos]);
+    setPoligonos([puntos]);
   };
 
   const handleBorrarPoligono = () => {
     // Borrar el polígono anteriormente dibujado
     setPoligonos([]);
-  
+    setPuntosControl([]);
+
     // Borrar los puntos de control
-    handleAgregarPunto({ lat: 0, lng: 0 });
+    // handleAgregarPunto({ lat: 0, lng: 0 });
   };
+
+  useEffect(() => {
+    if (puntosControl.length >= 3)
+      handleCrearPoligono();
+  }, [puntosControl]);
 
   return (
     isOpen && (
@@ -92,9 +100,6 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl }) =
         <div className="modal-buttons">
           <button className="cancelar-button" onClick={handleCloseModal}>
             Cerrar
-          </button>
-          <button className="crear-poligono-button" onClick={handleCrearPoligono}>
-            Crear polígono
           </button>
           <button className="crear-poligono-button" onClick={handleBorrarPoligono}>
             Borrar polígono

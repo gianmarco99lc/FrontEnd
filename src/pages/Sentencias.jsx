@@ -218,6 +218,8 @@ const Sentencias = () => {
     e.preventDefault();
     try {
       setIsMostrarSentenciaLoading(true);
+      console.log("la sentencia",sentencias[index]);
+      setSentenciaSeleccionada(sentencias[index].victima);
       const sentenciaInfo = await axios.get(`/api/sentencia/${sentencias[index].id}`);
       const conexionesVictima = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._victima.id}`);
       const conexionesAgresor = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._agresor.id}`);
@@ -250,6 +252,7 @@ const Sentencias = () => {
                 handleCloseModal={() => setMostrarSentencia(false)}
                 isOpen={mostrarSentencia}
                 puntosControl={[ultimaConexionVictimaAgresor.victima, ultimaConexionVictimaAgresor.agresor]}
+                idVictima={sentenciaSeleccionada}
               />
             </div>
 

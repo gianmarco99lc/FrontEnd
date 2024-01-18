@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { CircularProgress } from "@mui/material";
+import { Polyline } from "@react-google-maps/api";
+import axios from "axios";
 
-export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl }) => {
+export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVictima }) => {
+
+  const [zonasDeSeguridad, setZonasDeSeguridad] = useState([]);
+  const [isLoadingZonasDeSeguridad, setIsLoadingZonasDeSeguridad] = useState(true);
 
   const center = {lat: puntosControl[0].lat, lng: puntosControl[0].lng};
 
@@ -13,22 +19,35 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl }) => {
   };
 
   useEffect(() => {
-    const obtenerZonasDeSeguridad = async () => {
-      if (isLoadingZonasDeSeguridad) {
-        try {
-          const zonasDeSeguridad = await axios.get("/api/zonas/findAll");
-          setZonasDeSeguridad(zonasDeSeguridad.data.response.map( zonaDeSeguridad => ({...zonaDeSeguridad, nombre: zonaDeSeguridad._nombre, victima: zonaDeSeguridad.usuario._Nombre}) ))
-        } catch(error) {
-          console.log(error);
-        } finally {
-          setIsLoadingZonasDeSeguridad(false);
-        }
+    const obtenerZonas = async () => {
+      try {
+        const coordenadasDeZonas = await axios.get(`/api/coordenadas/todos`);
+        const zonasDeSeguridadDeUsuario = coordenadasDeZonas.data.response.filter( coordenada => coordenada._zona_segura.usuario.id === idVictima );
+
+        const agrupados = {};
+
+        zonasDeSeguridadDeUsuario.forEach(objeto => {
+          const id = objeto._zona_segura.id;
+
+          if (!agrupados[id]) {
+            agrupados[id] = [];
+          }
+
+          agrupados[id].push(objeto);
+        });
+
+        const resultado = Object.values(agrupados);
+        setZonasDeSeguridad(resultado);
+      } catch(error) {
+        console.log(error);
+      } finally {
+        setIsLoadingZonasDeSeguridad(false);
       }
     }
 
-    obtenerZonasDeSeguridad();
+    obtenerZonas();
 
-  }, [isLoadingZonasDeSeguridad]);
+  }, []);
 
   function calcularDistancia(lat1 = puntosControl[0].lat, lon1  = puntosControl[0].lng, lat2  = puntosControl[1].lat, lon2  = puntosControl[1].lng) {
     const radioTierra = 6371; // Radio de la Tierra en kilómetros
@@ -51,7 +70,8 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl }) => {
   }
 
   return (
-    isOpen && (
+    isOpen &&
+      isLoadingZonasDeSeguridad ? <CircularProgress /> :
       <div className=".mapa">
         <h2>Mapa sentencias</h2>
         <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
@@ -76,7 +96,28 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl }) => {
                   label={index === 0 ? "victima" : "agresor"}
                 />
               ))}
+                {
+                  zonasDeSeguridad.map((zona, index) => {
+                    const zonaSeguridad = zona.map(coordenada => {
+                      const pathCoordenada = { lat: coordenada._latitudY, lng: coordenada._longitudX };
+                      return (
+                        <Polyline
+                          key={index}
+                          path={[pathCoordenada]}
+                          options={{
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 1,
+                            strokeWeight: 2
+                          }}
+                        />
+                      );
+                    });
 
+                    console.log("La zona mi mano", zonaSeguridad);
+
+                    return zonaSeguridad;
+                  })
+                }
             </GoogleMap>
           </LoadScript>
           <div>
@@ -90,5 +131,4 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl }) => {
         </div>
       </div>
     )
-  );
 }

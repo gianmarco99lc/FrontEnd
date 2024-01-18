@@ -97,26 +97,16 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
                 />
               ))}
                 {
-                  zonasDeSeguridad.map((zona, index) => {
-                    const zonaSeguridad = zona.map(coordenada => {
-                      const pathCoordenada = { lat: coordenada._latitudY, lng: coordenada._longitudX };
-                      return (
-                        <Polyline
-                          key={index}
-                          path={[pathCoordenada]}
-                          options={{
-                            strokeColor: "#FF0000",
-                            strokeOpacity: 1,
-                            strokeWeight: 2
-                          }}
-                        />
-                      );
-                    });
-
-                    console.log("La zona mi mano", zonaSeguridad);
-
-                    return zonaSeguridad;
-                  })
+                  zonasDeSeguridad.map((zona, index) => <Polyline
+                      key={index}
+                      path={zona.map( coordenada => ({lat: coordenada._latitudY, lng: coordenada._longitudX}) )}
+                      options={{
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 1,
+                        strokeWeight: 2
+                      }}
+                    />
+                  )
                 }
             </GoogleMap>
           </LoadScript>

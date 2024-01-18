@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Select,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material';
 import axios from "axios";
+import Mapa from './Mapa';
 
 function Conexion() {
 
@@ -18,6 +19,8 @@ function Conexion() {
   const [conexiones, setConexiones] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [isUsuariosLoading, setUsuariosLoading] = useState(true);
+  const [mostrarUbicacion, setMostrarUbicacion] = useState(false);
+  const [conexionSeleccionada, setConexionSeleccionada] = useState({});
 
   const handleUserChange = (event) => {
     const selectedUserId = event.target.value;
@@ -73,7 +76,14 @@ function Conexion() {
 
     obtenerData();
 
-  }, [selectedUser])
+  }, [selectedUser]);
+
+  const handleMostrarUbicacion = (e, index) => {
+    e.preventDefault();
+    console.log(conexiones[index]);
+    setConexionSeleccionada(conexiones[index]);
+    setMostrarUbicacion(true);
+  }
 
   return (
     <div>
@@ -87,6 +97,26 @@ function Conexion() {
             ) )
           }
         </select>
+      }
+      {
+        mostrarUbicacion &&
+        <div className="modal">
+          <div className="modal-content contenedor">
+            <div>
+              <Mapa
+                  isOpen={mostrarUbicacion}
+                  handleCloseModal={() => setMostrarUbicacion(false)}
+                  // handleAgregarPunto={handleAgregarPunto}
+                  puntosControl={[{lat: conexionSeleccionada.latitud, lng: conexionSeleccionada.longitud}]}
+                  // setPuntosControl={setPuntosControl}
+                  // zonaSeguridadSeleccionada={zonaSeguridadSeleccionada}
+                  borrarPoligono={true}
+                  parapeto={true}
+                />
+            </div>
+          </div>
+
+        </div>
       }
       {
         isConexionLoading ? <CircularProgress /> :
@@ -111,7 +141,9 @@ function Conexion() {
                   <TableCell>{conexion.latitud}</TableCell>
                   <TableCell>{conexion.longitud}</TableCell>
                   <TableCell>{conexion.fecha}</TableCell>
-                  <TableCell>VER</TableCell>
+                  <TableCell>
+                    <Button variant="text" onClick={(e) => handleMostrarUbicacion(e, index)}>Ver</Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

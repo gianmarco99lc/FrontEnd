@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Polyline, Polygon } from "@react-google-maps/api";
 import axios from "axios";
 
-const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, setPuntosControl }) => {
+const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, setPuntosControl, borrarPoligono, parapeto, parapeto2 }) => {
 
   const [poligonos, setPoligonos] = useState([]);
+  const [center, setCenter] = useState({lat: 10.465, lng: -66.976});
 
   const containerStyle = {
     width: "500px",
@@ -13,22 +14,23 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, set
     justifyContent: "center"
   };
 
-  const center = {
-    lat: 10.465,
-    lng: -66.976,
-  };
+  useEffect(() => {
+    const center = parapeto && setCenter({lat: puntosControl[0].lat, lng: puntosControl[0].lng});
+
+  }, []);
+
 
   const handleMapClick = (e) => {
-    if (!e) return; // Agrega esta línea para manejar el caso en el que e sea null
-
     const { latLng } = e;
     const lat = latLng.lat();
     const lng = latLng.lng();
 
+    setCenter({lat, lng});
     handleAgregarPunto({ lat, lng });
   };
 
   const handleCrearPoligono = () => {
+    console.log("MI MANO", puntosControl);
     const puntos = puntosControl.map((punto) => ({
       lat: punto.lat,
       lng: punto.lng,
@@ -52,10 +54,16 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, set
       handleCrearPoligono();
   }, [puntosControl]);
 
+  useEffect(() => {
+    if (parapeto === true) {
+      handleCrearPoligono();
+    }
+  }, [])
+
   return (
     isOpen && (
       <div className=".mapa">
-        <h2>Zona de seguridad</h2>
+        <h2>{parapeto2 ? "" : parapeto ? "Conexión" : "Zona de seguridad"}</h2>
         <LoadScript googleMapsApiKey="AIzaSyBcVP__otz3wxYvWgx_LUJp0DOJSDKhDV4">
           <GoogleMap
             mapContainerStyle={containerStyle}
@@ -101,9 +109,12 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, set
           <button className="cancelar-button" onClick={handleCloseModal}>
             Cerrar
           </button>
-          <button className="crear-poligono-button" onClick={handleBorrarPoligono}>
-            Borrar polígono
-          </button>
+          {
+            borrarPoligono === undefined &&
+            <button className="crear-poligono-button" onClick={handleBorrarPoligono}>
+              Borrar polígono
+            </button>
+          }
         </div>
       </div>
     )

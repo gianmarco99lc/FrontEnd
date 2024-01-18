@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
+import Mapa from "./Mapa";
 
 const Alertas = () => {
 
@@ -81,16 +82,28 @@ const Alertas = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Alerta</h2>
-            <p>info alerta</p>
+            <div>
+            {/* {
+              JSON.stringify(activeAlerta)
+            } */}
+            </div>
+            <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+              <Mapa
+                isOpen={modalVisible}
+                handleCloseModal={() => setModalVisible(false)}
+                // handleAgregarPunto={handleAgregarPunto}
+                puntosControl={[{lat: activeAlerta.latitud, lng: activeAlerta.longitud}]}
+                // setPuntosControl={setPuntosControl}
+                // zonaSeguridadSeleccionada={zonaSeguridadSeleccionada}
+                borrarPoligono={true}
+                parapeto={true}
+                parapeto2={true}
+              />
+            </div>
             <div className="modal-buttons">
-              <div>
-              {
-                JSON.stringify(activeAlerta)
-              }
-              </div>
-              <button className="cancelar-button" onClick={handleCerrarModal}>
+              {/* <button className="cancelar-button" onClick={handleCerrarModal}>
                 Cerrar
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

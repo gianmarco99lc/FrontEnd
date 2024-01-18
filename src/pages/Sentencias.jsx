@@ -4,12 +4,16 @@ import { CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { MapaSentencia } from "./MapaSentencia";
 
 const Sentencias = () => {
   const [sentencias, setSentencias] = useState([]);
   const [victimas, setVictimas] = useState([]);
   const [agresores, setAgresores] = useState([]);
   const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
+  const [mostrarSentencia, setMostrarSentencia] = useState(false);
+  const [sentenciaSeleccionada, setSentenciaSeleccionada] = useState({});
+  const [isMostrarSentenciaLoading, setIsMostrarSentenciaLoading] = useState(false);
   const [nuevaSentencia, setNuevaSentencia] = useState({
     victima: "",
     agresor: "",
@@ -21,6 +25,7 @@ const Sentencias = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalZonasVisible, setModalZonasVisible] = useState(false);
   const [zonasSeguridad, setZonasSeguridad] = useState([]);
+  const [ultimaConexionVictimaAgresor, setUltimaConexionVictimaAgresor] = useState({victima: {}, agresor: {}})
   const [zonaSeguridadActual, setZonaSeguridadActual] = useState({
     punto1: "",
     punto2: "",
@@ -39,7 +44,7 @@ const Sentencias = () => {
         const sentencias = await axios.get("/api/sentencia/todos");
         console.log("Mano", sentencias);
         usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
-        sentencias.data.response.map( sentencia => setSentencias( prev => [...prev, {distanciasMinima: sentencia._distanciaMinima, tiemposControl: sentencia._tiempo_control, victima: sentencia._victima.id, agresor: sentencia._agresor.id}] ) )
+        sentencias.data.response.map( sentencia => setSentencias( prev => [...prev, {...sentencia, distanciasMinima: sentencia._distanciaMinima, tiemposControl: sentencia._tiempo_control, victima: sentencia._victima.id, agresor: sentencia._agresor.id}] ) )
       } catch(error) {
         console.log(error);
       } finally {
@@ -52,7 +57,20 @@ const Sentencias = () => {
 
   const handleGuardarSentencia = async () => {
 
-    console.log("API", import.meta.env.VITE_APP_SERVER_URL);
+    console.log(nuevaSentencia);
+
+    nuevaSentencia.agresor = parseInt(nuevaSentencia.agresor);
+    nuevaSentencia.victima = parseInt(nuevaSentencia.victima);
+
+    if (nuevaSentencia.tiemposControl <= 0 || nuevaSentencia.tiemposControl === 0) {
+      alert("El tiempo de control no puede ser menor o igual a 0");
+      return;
+    }
+
+    if (nuevaSentencia.distanciasAlejamiento <= 0 || nuevaSentencia.distanciasAlejamiento === "") {
+      alert("La distancia de alejamiento no puede ser menor o igual a 0");
+      return;
+    }
 
     const response = await axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/sentencia/insert`, {
       _distanciaMinima: nuevaSentencia.distanciasAlejamiento,
@@ -75,13 +93,7 @@ const Sentencias = () => {
       ...sentencias,
       { ...nuevaSentencia, id: sentencias.length + 1 },
     ]);
-    // setNuevaSentencia({
-    //   victima: "",
-    //   agresor: "",
-    //   tiemposControl: "",
-    //   distanciasAlejamiento: "",
-    //   zonasSeguridad: [],
-    // });
+
     setModalVisible(false);
   };
 
@@ -202,6 +214,24 @@ const Sentencias = () => {
 
   }
 
+  const handleVerSentencia = async (e, index) => {
+    e.preventDefault();
+    try {
+      setIsMostrarSentenciaLoading(true);
+      const sentenciaInfo = await axios.get(`/api/sentencia/${sentencias[index].id}`);
+      const conexionesVictima = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._victima.id}`);
+      const conexionesAgresor = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._agresor.id}`);
+      const ultimaConexionVictima = conexionesVictima.data.response.reduce((max, conexion) => conexion.id > max.id ? conexion : max, conexionesVictima.data.response[0]);
+      const ultimaConexionAgresor = conexionesAgresor.data.response.reduce((max, conexion) => conexion.id > max.id ? conexion : max, conexionesAgresor.data.response[0]);
+      setUltimaConexionVictimaAgresor({agresor: {lat: ultimaConexionAgresor._latitud, lng: ultimaConexionAgresor._longitud}, victima: {lat: ultimaConexionVictima._latitud, lng: ultimaConexionVictima._longitud}})
+      setMostrarSentencia(true);
+    } catch(error) {
+      console.log("Error", error);
+    } finally {
+      setIsMostrarSentenciaLoading(false);
+    }
+  }
+
   return (
     <div className="contenedor-sentencias">
       <div className="titulo">
@@ -212,6 +242,20 @@ const Sentencias = () => {
           Agregar
         </Button>
       </div>
+      {
+        mostrarSentencia && (
+          <div className="modal">
+            <div className="modal-content">
+              <MapaSentencia
+                handleCloseModal={() => setMostrarSentencia(false)}
+                isOpen={mostrarSentencia}
+                puntosControl={[ultimaConexionVictimaAgresor.victima, ultimaConexionVictimaAgresor.agresor]}
+              />
+            </div>
+
+          </div>
+        )
+      }
       <div>
         {
           isLoadingUsuarios ? <CircularProgress /> :
@@ -229,7 +273,7 @@ const Sentencias = () => {
               {
                 console.log("Sentencias", sentencias)
               }
-              {sentencias.map((sentencia) => (
+              {sentencias.map((sentencia, index) => (
                 <tr key={sentencia.id}>
                   {
                     console.log("Victimas", victimas)
@@ -239,15 +283,29 @@ const Sentencias = () => {
                   <td>{sentencia.tiemposControl}</td>
                   <td>{sentencia.distanciasMinima}</td>
                   <td>
-                    <button
-                      className="edit-button"
+                    {
+                      isMostrarSentenciaLoading ? <CircularProgress /> :
+                      <Button
+                        onClick={(e) => handleVerSentencia(e, index)}
+                        variant="text"
+                        style={{width: "50px"}}
+                      >
+                        Ver
+                      </Button>
+                    }
+                    <Button
+                      // className="edit-button"
+                      color="success"
+                      variant="contained"
                       onClick={() => handleEditarSentencia(sentencia)}
+                      style={{width: "50px"}}
                     >
                       Editar
-                    </button>
+                    </Button>
                     <IconButton
                       aria-label="delete"
                       onClick={() => handleEliminarSentencia(sentencia.id)}
+                      style={{width: "50px"}}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -319,9 +377,9 @@ const Sentencias = () => {
             }
 
             {/* Otros campos del formulario */}
-            <label>Tiempos de Control:</label>
+            <label>Tiempos de Control (segundos):</label>
             <input
-              type="text"
+              type="number"
               value={nuevaSentencia.tiemposControl}
               onChange={(e) => handleNuevaSentencia(e, "tiemposControl")}
               //   setNuevaSentencia({
@@ -331,9 +389,9 @@ const Sentencias = () => {
               // }
             />
 
-            <label>Distancias de Alejamiento:</label>
+            <label>Distancias de Alejamiento (metros):</label>
             <input
-              type="text"
+              type="number"
               value={nuevaSentencia.distanciasAlejamiento}
               onChange={(e) => handleNuevaSentencia(e, "distanciasAlejamiento")}
             />

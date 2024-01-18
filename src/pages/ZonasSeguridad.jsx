@@ -57,10 +57,11 @@ const ZonasSeguridad = () => {
     setPuntosControl([]);
     setZonaSeguridadSeleccionada( zonasDeSeguridad[index] );
     const coordenadas = await axios.get("/api/coordenadas/todos");
-    console.log(coordenadas.data.response);
-    console.log(zonasDeSeguridad[index]);
-    const puntosControl = coordenadas.data.response.filter( puntoControl => puntoControl._zona_segura.id === zonasDeSeguridad[index].id );
-    puntosControl.map( puntoControl => setPuntosControl(prev => [...prev, {lat: puntoControl._latitudY ,lng: puntoControl._longitudX}]) );
+    if (coordenadas.data.response !== null) {
+      const puntosControl = coordenadas.data.response.filter( puntoControl => puntoControl._zona_segura.id === zonasDeSeguridad[index].id );
+      puntosControl.map( puntoControl => setPuntosControl(prev => [...prev, {lat: puntoControl._latitudY ,lng: puntoControl._longitudX}]) );
+    }
+
     setModalVisible(true);
   };
 
@@ -228,6 +229,7 @@ const ZonasSeguridad = () => {
                 puntosControl={puntosControl}
                 setPuntosControl={setPuntosControl}
                 zonaSeguridadSeleccionada={zonaSeguridadSeleccionada}
+                borrarPoligono={true}
               />
             </div>
             <div>

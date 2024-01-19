@@ -31,7 +31,7 @@ function Conexion() {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        const usuarios = await axios.get("/api/usuarios/findAll");
+        const usuarios = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
         setUsuarios( usuarios.data.response.map( usuario => ({nombre: usuario._Nombre, id: usuario.id})) )
       } catch(error) {
         console.log(error);
@@ -50,7 +50,7 @@ function Conexion() {
         if (conexiones.length > 0)
           console.log("Hey", conexiones);
         setIsConexionLoading(true);
-        const conexionResponse = await axios.get(`/api/conexion/usuario/${selectedUser}`);
+        const conexionResponse = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/conexion/usuario/${selectedUser}`);
         console.log("Conexion", conexionResponse);
         if (conexionResponse.data.response !== null) {
           setConexiones(conexionResponse.data.response.map( conexion => {

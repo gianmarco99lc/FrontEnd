@@ -27,7 +27,7 @@ const Alertas = () => {
   useEffect(() => {
     const obtenerAlertas = async () => {
       try {
-        const alertas = await axios.get(`/api/alertas/findAll`);
+        const alertas = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/alertas/findAll`);
         console.log(alertas.data.response);
         setAlertas(alertas.data.response.map(alerta => ({victima: alerta.usuario._Username, tipoAlerta: alerta._tipoAlerta, fechaHora: new Date(alerta._fechaHora), latitud: alerta._latitud, longitud: alerta._longitud})));
       } catch(error) {

@@ -35,7 +35,7 @@ const Usuarios = () => {
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
-      const usuarios = await axios.get("/api/usuarios/findAll");
+      const usuarios = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
       usuarios.data.response.map( usuario => setUsuarios( prev => [...prev, {
         nombre: usuario._Nombre,
         username: usuario._Username,
@@ -78,7 +78,7 @@ const Usuarios = () => {
       setIsLoading(true);
 
       if (validacionesNuevoUsuario()) {
-        const respuestaNuevoUsuario = await axios.post("/api/usuarios/insert", {
+        const respuestaNuevoUsuario = await axios.post("/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/insert", {
           _Username: nuevoUsuario.username,
           _Correo: nuevoUsuario.correo,
           _Nombre: nuevoUsuario.nombre,
@@ -123,7 +123,7 @@ const Usuarios = () => {
     e.preventDefault();
     try {
       console.log("El usuario editando", usuarioEditando);
-      const response = await axios.put(`/api/usuarios/update`, {
+      const response = await axios.put(`/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/update`, {
         _Username: usuarioEditando.username,
         _Correo: usuarioEditando.correo,
         _Nombre: usuarioEditando.nombre,

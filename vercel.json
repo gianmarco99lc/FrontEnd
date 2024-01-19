@@ -1,0 +1,13 @@
+{
+    "headers": [
+      {
+        "source": "/(.*)",
+        "headers": [
+          {
+            "key": "skip-browser-warning-header",
+            "value": "true"
+          }
+        ]
+      }
+    ]
+  }

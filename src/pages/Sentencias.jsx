@@ -40,8 +40,8 @@ const Sentencias = () => {
     const obtenerUsuarios = async () => {
       try {
         console.log("Fetcheando");
-        const usuarios = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
-        const sentencias = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/sentencia/todos");
+        const usuarios = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll`);
+        const sentencias = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/sentencia/todos`);
         console.log("Mano", sentencias);
         usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
         sentencias.data.response.map( sentencia => setSentencias( prev => [...prev, {...sentencia, distanciasMinima: sentencia._distanciaMinima, tiemposControl: sentencia._tiempo_control, victima: sentencia._victima.id, agresor: sentencia._agresor.id}] ) )

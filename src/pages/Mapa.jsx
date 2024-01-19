@@ -50,7 +50,7 @@ const Mapa = ({ isOpen, handleCloseModal, handleAgregarPunto, puntosControl, set
   };
 
   useEffect(() => {
-    if (puntosControl.length >= 3)
+    if (puntosControl.length >= 4)
       handleCrearPoligono();
   }, [puntosControl]);
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker, Polygon } from "@react-google-maps/api";
 import { CircularProgress } from "@mui/material";
-import { Polyline } from "@react-google-maps/api";
 import axios from "axios";
+import { point, polygon, booleanPointInPolygon } from '@turf/turf';
 
 export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVictima }) => {
 
@@ -17,6 +17,25 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
     display: "flex",
     justifyContent: "center"
   };
+
+  function isCoordinateInsidePolygon(coordinate, polygonPoints) {
+
+    if (!Array.isArray(polygonPoints))
+      polygonPoints = [polygonPoints];
+
+    const pointToCheck = point([coordinate.lng, coordinate.lat]);
+
+    const polygonCoordinates = polygonPoints.map( point => [point._longitudX, point._latitudY]);
+
+    const polygon2 = polygon([polygonCoordinates]);
+
+    const isInside = booleanPointInPolygon(pointToCheck, polygon2);
+
+    console.log("Respuesta", isInside);
+
+    return isInside;
+
+  }
 
   useEffect(() => {
     const obtenerZonas = async () => {
@@ -86,24 +105,20 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
                 <Marker
                   key={index}
                   position={punto}
-                  // icon={{
-                  //   path: typeof window !== 'undefined' && window.google && window.google.maps ? window.google.maps.SymbolPath.CIRCLE : '',
-                  //   options: {fillColor: index === 0 ? 'blue' : 'red'},
-                  //   fillOpacity: 1,
-                  //   strokeWeight: 0,
-                  //   scale: 8
-                  // }}
                   label={index === 0 ? "victima" : "agresor"}
                 />
               ))}
                 {
-                  zonasDeSeguridad.map((zona, index) => <Polyline
+                  zonasDeSeguridad.map((zona, index) =>
+                    <Polygon
                       key={index}
-                      path={zona.map( coordenada => ({lat: coordenada._latitudY, lng: coordenada._longitudX}) )}
+                      paths={zona.map( coordenada => ({lat: coordenada._latitudY, lng: coordenada._longitudX}) )}
                       options={{
                         strokeColor: "#FF0000",
-                        strokeOpacity: 1,
-                        strokeWeight: 2
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: isCoordinateInsidePolygon(puntosControl[1], zona) ? "#FF0000" : "#FFFFFF",
+                        fillOpacity: 0.35,
                       }}
                     />
                   )

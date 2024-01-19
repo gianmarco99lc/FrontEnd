@@ -24,6 +24,8 @@ const Login = () => {
 
       const response = await axios.get(`/api/admin/username/${form.username}`);
 
+      console.log(response);
+
       console.log("respuesta", response.data.response);
 
       const user = response.data.response;

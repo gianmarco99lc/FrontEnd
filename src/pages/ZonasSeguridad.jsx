@@ -18,11 +18,11 @@ const ZonasSeguridad = () => {
   const [victimas, setVictimas] = useState([]);
   const [victimaSeleccionada, setVictimaSeleccionada] = useState(null);
   const [zonaSeguridadSeleccionada, setZonaSeguridadSeleccionada] = useState({});
+  const [isGuardandoCoordenadas, setIsGuardandoCoordenadas] = useState(false);
 
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        console.log("Fetcheando");
         const usuarios = await axios.get("/api/usuarios/findAll");
         usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 2 && setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
       } catch(error) {
@@ -130,13 +130,14 @@ const ZonasSeguridad = () => {
   const guardarCoordenadas = async (e) => {
     e.preventDefault();
     try {
+      setIsGuardandoCoordenadas(true);
       console.log("Punto de control", puntosControl);
       console.log("Zona de seguridad seleccionada", zonaSeguridadSeleccionada);
       await postearCoordenadas(0);
     } catch(error) {
       console.log(error);
     } finally {
-
+      setIsGuardandoCoordenadas(false);
     }
   }
 
@@ -149,7 +150,6 @@ const ZonasSeguridad = () => {
       else
         return;
 
-      console.log(`Iteracion ${iteration}`, puntosControl);
       const response = await axios.post("/api/coordenadas", {
         _latitudY: puntosControl[iteration].lat,
         _longitudX: puntosControl[iteration].lng,
@@ -161,9 +161,9 @@ const ZonasSeguridad = () => {
           "Content-Type": "application/json"
         }
       });
-      console.log("Respuesta", response);
+      console.log("Respuesta del posteo", response);
     } catch(error) {
-      console.log(error);
+      console.log("Error del posteo", error);
     }
   }
 
@@ -290,7 +290,8 @@ const ZonasSeguridad = () => {
                 </table>
                 <div>
                 {
-                  puntosControl.length >= 3 &&
+                  puntosControl.length >= 4 &&
+                  isGuardandoCoordenadas ? <CircularProgress /> :
                   <Button onClick={guardarCoordenadas}>Guardar</Button>
                 }
                 </div>

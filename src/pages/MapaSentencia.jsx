@@ -63,7 +63,6 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
       try {
         const coordenadasDeZonas = await axios.get(`/api/coordenadas/todos`);
         const zonasDeSeguridadDeUsuario = coordenadasDeZonas.data.response.filter( coordenada => coordenada._zona_segura.usuario.id === idVictima );
-
         const agrupados = {};
 
         zonasDeSeguridadDeUsuario.forEach(objeto => {

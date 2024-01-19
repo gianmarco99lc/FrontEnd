@@ -146,7 +146,7 @@ const ZonasSeguridad = () => {
       console.log(puntosControl.length, iteration);
 
       if (iteration < puntosControl.length)
-        postearCoordenadas(iteration + 1);
+        await postearCoordenadas(iteration + 1);
       else
         return;
 

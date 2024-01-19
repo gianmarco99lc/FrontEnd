@@ -73,10 +73,6 @@ const ZonasSeguridad = () => {
     setAgregarModal(true);
   };
 
-  const handleCerrarAgregarModal = () => {
-    setAgregarModal(false);
-  };
-
   const handleAgregarPunto = (coordenadas) => {
     // Agrega el nuevo punto de control a la lista
     setPuntosControl([...puntosControl, coordenadas]);
@@ -166,20 +162,6 @@ const ZonasSeguridad = () => {
       console.log("Error del posteo", error);
     }
   }
-
-  useEffect(() => {
-    const obtenerCoordenadas = async () => {
-      try {
-      } catch(error) {
-        console.log(error);
-      } finally {
-
-      }
-    }
-
-    obtenerCoordenadas();
-
-  }, [zonaSeguridadSeleccionada]);
 
   return (
     <div className="contenedor-usuarios">

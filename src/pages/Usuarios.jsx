@@ -119,23 +119,47 @@ const Usuarios = () => {
 
   };
 
-  const handleActualizarUsuario = () => {
-    setUsuarios((prevUsuarios) =>
-      prevUsuarios.map((usuario) =>
-        usuario.id === usuarioEditando.id
-          ? { ...usuario, ...nuevoUsuario }
-          : usuario
-      )
-    );
-    setNuevoUsuario({
-      nombre: "",
-      apellido: "",
-      correo: "",
-      password: "",
-      tipoUsuario: "",
-    });
-    setUsuarioEditando(null);
-    setModalVisible(false);
+  const handleActualizarUsuario = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("El usuario editando", usuarioEditando);
+      const response = await axios.put(`/api/usuarios/update`, {
+        _Username: usuarioEditando.username,
+        _Correo: usuarioEditando.correo,
+        _Nombre: usuarioEditando.nombre,
+        usuarioTypeDto: {
+          id: usuarioEditando.tipoUsuario === "Agresor" ? 1 : 2
+        },
+        imei: "XXX-YY",
+        _Password: usuarioEditando.password,
+        estatus: true,
+        docIdentidad: "26763470",
+        id: usuarioEditando.id
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      console.log(response);
+      setUsuarios((prevUsuarios) =>
+        prevUsuarios.map((usuario) =>
+          usuario.id === usuarioEditando.id
+            ? { ...usuario, ...nuevoUsuario }
+            : usuario
+        )
+      );
+      setNuevoUsuario({
+        nombre: "",
+        apellido: "",
+        correo: "",
+        password: "",
+        tipoUsuario: "",
+      });
+      setUsuarioEditando(null);
+      setModalVisible(false);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   const handleEditarUsuario = (usuario) => {

@@ -4,7 +4,7 @@ import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import { point, polygon, booleanPointInPolygon } from '@turf/turf';
 
-export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVictima }) => {
+export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVictima, distanciaMinima }) => {
 
   const [zonasDeSeguridad, setZonasDeSeguridad] = useState([]);
   const [isLoadingZonasDeSeguridad, setIsLoadingZonasDeSeguridad] = useState(true);
@@ -27,11 +27,32 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
 
     const polygonCoordinates = polygonPoints.map( point => [point._longitudX, point._latitudY]);
 
+    polygonCoordinates.push([polygonPoints[0]._longitudX, polygonPoints[0]._latitudY]);
+
     const polygon2 = polygon([polygonCoordinates]);
 
     const isInside = booleanPointInPolygon(pointToCheck, polygon2);
 
-    console.log("Respuesta", isInside);
+    console.log(isInside);
+
+    if (isInside) {
+      axios.post(`/api/alertas/insert`, {
+        _tipoAlerta: "AGRESOR SE ENCUENTRA DENTRO DE ZONA SEGURA",
+        _latitud: coordinate.lat,
+        _longitud: coordinate.lng,
+        _fechaHora: (new Date()).getTime(),
+        usuario: {
+        id: idVictima
+        },
+        id: 5000
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then( response => console.log(response) )
+        .catch( error => console.log(error) )
+    }
 
     return isInside;
 
@@ -81,6 +102,23 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distancia = radioTierra * c * 1000;
 
+    console.log("Distancia", distancia, distanciaMinima);
+
+    if (distancia <= distanciaMinima) {
+      axios.post(`/api/alertas/insert`, {
+        _tipoAlerta: "DISTANCIA MÍNIMA EXCEDIDA",
+        _latitud: lat2,
+        _longitud: lon2,
+        _fechaHora: (new Date()).getTime(),
+        usuario: {
+        id: idVictima
+        },
+        id: 3000
+      })
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
+    }
+
     return distancia;
   }
 
@@ -117,7 +155,7 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
                         strokeColor: "#FF0000",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
-                        fillColor: isCoordinateInsidePolygon(puntosControl[1], zona) ? "#FF0000" : "#FFFFFF",
+                        fillColor: isCoordinateInsidePolygon(puntosControl[1], zona) === true ? "#D23C30" : "#263137",
                         fillOpacity: 0.35,
                       }}
                     />

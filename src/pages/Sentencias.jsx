@@ -97,24 +97,48 @@ const Sentencias = () => {
     setModalVisible(false);
   };
 
-  const handleActualizarSentencia = () => {
-    setSentencias((prevSentencias) =>
-      prevSentencias.map((sentencia) =>
-        sentencia.id === sentenciaEditando.id
-          ? { ...sentencia, ...nuevaSentencia }
-          : sentencia
-      )
-    );
-    setNuevaSentencia({
-      victima: "",
-      agresor: "",
-      tiemposControl: "",
-      distanciasAlejamiento: "",
-      zonasSeguridad: [],
-    });
-    setSentenciaEditando(null);
-    setModalVisible(false);
-  };
+  const handleActualizarSentencia = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`/api/sentencia/update`,{
+        _distanciaMinima: nuevaSentencia.distanciasAlejamiento,
+        _tiempo_control: nuevaSentencia.tiemposControl,
+        _victima: {
+          id: nuevaSentencia.victima
+        },
+        _agresor: {
+          id: nuevaSentencia.agresor
+        },
+        id: sentenciaEditando.id
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      console.log(response);
+      setSentencias((prevSentencias) =>
+        prevSentencias.map((sentencia) =>
+          sentencia.id === sentenciaEditando.id
+            ? { ...sentencia, ...nuevaSentencia }
+            : sentencia
+        )
+      );
+      setNuevaSentencia({
+        victima: "",
+        agresor: "",
+        tiemposControl: "",
+        distanciasAlejamiento: "",
+        zonasSeguridad: [],
+      });
+      setSentenciaEditando(null);
+      setModalVisible(false);
+    } catch(error) {
+      console.log(error);
+    } finally {
+
+    }
+  }
 
   const handleEditarSentencia = (sentencia) => {
     setSentenciaEditando(sentencia);
@@ -144,10 +168,6 @@ const Sentencias = () => {
       zonasSeguridad: [],
     });
     setSentenciaEditando(null);
-  };
-
-  const handleCrearZonas = () => {
-    setModalZonasVisible(true);
   };
 
   const handleGuardarZonas = () => {
@@ -219,7 +239,7 @@ const Sentencias = () => {
     try {
       setIsMostrarSentenciaLoading(true);
       console.log("la sentencia",sentencias[index]);
-      setSentenciaSeleccionada(sentencias[index].victima);
+      setSentenciaSeleccionada(sentencias[index]);
       const sentenciaInfo = await axios.get(`/api/sentencia/${sentencias[index].id}`);
       const conexionesVictima = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._victima.id}`);
       const conexionesAgresor = await axios.get(`/api/conexion/usuario/${sentenciaInfo.data.response._agresor.id}`);
@@ -252,7 +272,8 @@ const Sentencias = () => {
                 handleCloseModal={() => setMostrarSentencia(false)}
                 isOpen={mostrarSentencia}
                 puntosControl={[ultimaConexionVictimaAgresor.victima, ultimaConexionVictimaAgresor.agresor]}
-                idVictima={sentenciaSeleccionada}
+                idVictima={sentenciaSeleccionada.victima}
+                distanciaMinima={sentenciaSeleccionada.distanciasMinima}
               />
             </div>
 

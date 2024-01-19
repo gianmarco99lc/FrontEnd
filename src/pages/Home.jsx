@@ -22,7 +22,7 @@ const Home = () => {
   //GET
 
 useEffect(() => {
-  fetch("/${import.meta.env.VITE_APP_SERVER_URL}/admin/todos")
+  fetch("${import.meta.env.VITE_APP_SERVER_URL}/admin/todos")
     .then((response) => response.json())
     .then((data) => {
       console.log("Data from API:", data);
@@ -86,7 +86,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch("/${import.meta.env.VITE_APP_SERVER_URL}/admin", {
+      const response = await fetch("${import.meta.env.VITE_APP_SERVER_URL}/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

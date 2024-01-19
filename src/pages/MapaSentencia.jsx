@@ -36,7 +36,7 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
     console.log(isInside);
 
     if (isInside) {
-      axios.post(`/${import.meta.env.VITE_APP_SERVER_URL}/alertas/insert`, {
+      axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/alertas/insert`, {
         _tipoAlerta: "AGRESOR SE ENCUENTRA DENTRO DE ZONA SEGURA",
         _latitud: coordinate.lat,
         _longitud: coordinate.lng,
@@ -61,7 +61,7 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
   useEffect(() => {
     const obtenerZonas = async () => {
       try {
-        const coordenadasDeZonas = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/coordenadas/todos`);
+        const coordenadasDeZonas = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/coordenadas/todos`);
         const zonasDeSeguridadDeUsuario = coordenadasDeZonas.data.response.filter( coordenada => coordenada._zona_segura.usuario.id === idVictima );
         const agrupados = {};
 
@@ -104,7 +104,7 @@ export const MapaSentencia = ({ isOpen, handleCloseModal, puntosControl, idVicti
     console.log("Distancia", distancia, distanciaMinima);
 
     if (distancia <= distanciaMinima) {
-      axios.post(`/${import.meta.env.VITE_APP_SERVER_URL}/alertas/insert`, {
+      axios.post(`${import.meta.env.VITE_APP_SERVER_URL}/alertas/insert`, {
         _tipoAlerta: "DISTANCIA MÍNIMA EXCEDIDA",
         _latitud: lat2,
         _longitud: lon2,

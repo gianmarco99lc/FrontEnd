@@ -40,8 +40,8 @@ const Sentencias = () => {
     const obtenerUsuarios = async () => {
       try {
         console.log("Fetcheando");
-        const usuarios = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
-        const sentencias = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/sentencia/todos");
+        const usuarios = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
+        const sentencias = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/sentencia/todos");
         console.log("Mano", sentencias);
         usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 1 ? setAgresores( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ) : setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
         sentencias.data.response.map( sentencia => setSentencias( prev => [...prev, {...sentencia, distanciasMinima: sentencia._distanciaMinima, tiemposControl: sentencia._tiempo_control, victima: sentencia._victima.id, agresor: sentencia._agresor.id}] ) )
@@ -100,7 +100,7 @@ const Sentencias = () => {
   const handleActualizarSentencia = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/${import.meta.env.VITE_APP_SERVER_URL}/sentencia/update`,{
+      const response = await axios.put(`${import.meta.env.VITE_APP_SERVER_URL}/sentencia/update`,{
         _distanciaMinima: nuevaSentencia.distanciasAlejamiento,
         _tiempo_control: nuevaSentencia.tiemposControl,
         _victima: {
@@ -240,9 +240,9 @@ const Sentencias = () => {
       setIsMostrarSentenciaLoading(true);
       console.log("la sentencia",sentencias[index]);
       setSentenciaSeleccionada(sentencias[index]);
-      const sentenciaInfo = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/sentencia/${sentencias[index].id}`);
-      const conexionesVictima = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/conexion/usuario/${sentenciaInfo.data.response._victima.id}`);
-      const conexionesAgresor = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/conexion/usuario/${sentenciaInfo.data.response._agresor.id}`);
+      const sentenciaInfo = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/sentencia/${sentencias[index].id}`);
+      const conexionesVictima = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/conexion/usuario/${sentenciaInfo.data.response._victima.id}`);
+      const conexionesAgresor = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/conexion/usuario/${sentenciaInfo.data.response._agresor.id}`);
       const ultimaConexionVictima = conexionesVictima.data.response.reduce((max, conexion) => conexion.id > max.id ? conexion : max, conexionesVictima.data.response[0]);
       const ultimaConexionAgresor = conexionesAgresor.data.response.reduce((max, conexion) => conexion.id > max.id ? conexion : max, conexionesAgresor.data.response[0]);
       setUltimaConexionVictimaAgresor({agresor: {lat: ultimaConexionAgresor._latitud, lng: ultimaConexionAgresor._longitud}, victima: {lat: ultimaConexionVictima._latitud, lng: ultimaConexionVictima._longitud}})

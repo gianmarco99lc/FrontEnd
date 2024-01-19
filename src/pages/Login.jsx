@@ -22,7 +22,7 @@ const Login = () => {
 
       console.log("login", form.username, form.password);
 
-      const response = await axios.get(`/${import.meta.env.VITE_APP_SERVER_URL}/admin/username/${form.username}`);
+      const response = await axios.get(`${import.meta.env.VITE_APP_SERVER_URL}/admin/username/${form.username}`);
 
       console.log(response);
 

@@ -23,7 +23,7 @@ const ZonasSeguridad = () => {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        const usuarios = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
+        const usuarios = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/usuarios/findAll");
         usuarios.data.response.map( usuario => usuario.usuarioTypeDto.id === 2 && setVictimas( prev => [...prev, {id: usuario.id, nombre: usuario._Nombre}] ));
       } catch(error) {
         console.log(error);
@@ -38,7 +38,7 @@ const ZonasSeguridad = () => {
     const obtenerZonasDeSeguridad = async () => {
       if (isLoadingZonasDeSeguridad) {
         try {
-          const zonasDeSeguridad = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/zonas/findAll");
+          const zonasDeSeguridad = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/zonas/findAll");
           setZonasDeSeguridad(zonasDeSeguridad.data.response.map( zonaDeSeguridad => ({...zonaDeSeguridad, nombre: zonaDeSeguridad._nombre, victima: zonaDeSeguridad.usuario._Nombre}) ))
         } catch(error) {
           console.log(error);
@@ -56,7 +56,7 @@ const ZonasSeguridad = () => {
     e.preventDefault();
     setPuntosControl([]);
     setZonaSeguridadSeleccionada( zonasDeSeguridad[index] );
-    const coordenadas = await axios.get("/${import.meta.env.VITE_APP_SERVER_URL}/coordenadas/todos");
+    const coordenadas = await axios.get("${import.meta.env.VITE_APP_SERVER_URL}/coordenadas/todos");
     if (coordenadas.data.response !== null) {
       const puntosControl = coordenadas.data.response.filter( puntoControl => puntoControl._zona_segura.id === zonasDeSeguridad[index].id );
       puntosControl.map( puntoControl => setPuntosControl(prev => [...prev, {lat: puntoControl._latitudY ,lng: puntoControl._longitudX}]) );
@@ -146,7 +146,7 @@ const ZonasSeguridad = () => {
       else
         return;
 
-      const response = await axios.post("/${import.meta.env.VITE_APP_SERVER_URL}/coordenadas", {
+      const response = await axios.post("${import.meta.env.VITE_APP_SERVER_URL}/coordenadas", {
         _latitudY: puntosControl[iteration].lat,
         _longitudX: puntosControl[iteration].lng,
         _zona_segura: {

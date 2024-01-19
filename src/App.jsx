@@ -8,6 +8,14 @@ import "./App.css";
 
 const App = () => {
 
+
+  window.addEventListener('load', () => {
+    const skipBrowserWarningHeader = document.createElement('meta');
+    skipBrowserWarningHeader.name = 'skip-browser-warning-header';
+    skipBrowserWarningHeader.content = 'true';
+    document.head.appendChild(skipBrowserWarningHeader);
+  });
+
   const { authState } = useContext(AuthContext);
 
   let Routes = NotAuthenticatedRoutes;
